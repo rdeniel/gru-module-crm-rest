@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <!-- REST -->
+    <bean id="crm-rest.crmRest" class="fr.paris.lutece.plugins.crm.modules.rest.rs.CRMRest" />
+</beans>
