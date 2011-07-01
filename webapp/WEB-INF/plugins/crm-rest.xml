@@ -7,8 +7,8 @@
     <installation/>
     <changes/>
     <user-guide/>
-    <description>module.crm.rest.plugin.description</description>
-    <provider>module.crm.rest.plugin.provider</provider>
+    <description>module.crm.rest.module.description</description>
+    <provider>module.crm.rest.module.provider</provider>
     <provider-url>http://lutece.paris.fr</provider-url>
     <icon-url>images/admin/skin/plugins/crm/modules/rest/crm-rest.png</icon-url>
     <copyright>Copyright 2001-2011 Mairie de Paris</copyright>
