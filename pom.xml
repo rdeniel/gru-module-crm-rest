@@ -9,7 +9,7 @@
 	<artifactId>module-crm-rest</artifactId>
 	<packaging>lutece-plugin</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>CRM Rest webservice module</name>
+	<name>Lutece crm rest module</name>
 	<repositories>
         <repository>
             <id>luteceSnapshot</id>
