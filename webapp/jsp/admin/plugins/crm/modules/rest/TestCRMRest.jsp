@@ -94,6 +94,9 @@
                     <label for="notification_message">Message : </label>
                     <textarea name="notification_message"></textarea>
                     <br />
+                    <label for="notification_sender">Sender : </label>
+                    <input type="text" name="notification_sender" size="50" maxlength="255" />
+                    <br />
                     <input class="button" type="submit" value="Send" />
                 </form>
             </div>

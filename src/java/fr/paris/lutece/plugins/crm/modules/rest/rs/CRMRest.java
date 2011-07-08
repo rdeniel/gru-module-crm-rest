@@ -94,6 +94,7 @@ public class CRMRest
     private static final String PARAMETER_ID_DEMAND = "id_demand";
     private static final String PARAMETER_NOTIFICATION_OBJECT = "notification_object";
     private static final String PARAMETER_NOTIFICATION_MESSAGE = "notification_message";
+    private static final String PARAMETER_NOTIFICATION_SENDER = "notification_sender";
 
     // TAGS
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
@@ -286,6 +287,7 @@ public class CRMRest
      * @param strIdDemand the id demand
      * @param strNotificationObject the notification object
      * @param strNotificationMessage the notification message
+     * @param strSender the sender
      * @return the id demand
      */
     @POST
@@ -295,7 +297,8 @@ public class CRMRest
     public String doNotify( @FormParam( PARAMETER_ID_DEMAND )
     String strIdDemand, @FormParam( PARAMETER_NOTIFICATION_OBJECT )
     String strNotificationObject, @FormParam( PARAMETER_NOTIFICATION_MESSAGE )
-    String strNotificationMessage )
+    String strNotificationMessage, @FormParam( PARAMETER_NOTIFICATION_SENDER )
+    String strNotificationSender )
     {
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) &&
                 StringUtils.isNotBlank( strNotificationObject ) )
@@ -305,7 +308,8 @@ public class CRMRest
 
             if ( demand != null )
             {
-                CRMService.getService(  ).notify( nIdDemand, strNotificationObject, strNotificationMessage );
+                CRMService.getService(  )
+                          .notify( nIdDemand, strNotificationObject, strNotificationMessage, strNotificationSender );
             }
             else
             {
