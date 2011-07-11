@@ -88,7 +88,7 @@ public class CRMRest
     // PARAMETERS
     private static final String PARAMETER_ID_DEMAND_TYPE = "id_demand_type";
     private static final String PARAMETER_USER_GUID = "user_guid";
-    private static final String PARAMETER_DATA = "data";
+    private static final String PARAMETER_DEMAND_DATA = "demand_data";
     private static final String PARAMETER_STATUS_TEXT = "status_text";
     private static final String PARAMETER_ID_STATUS_CRM = "id_status_crm";
     private static final String PARAMETER_ID_DEMAND = "id_demand";
@@ -176,7 +176,7 @@ public class CRMRest
     String strIdDemandType, @FormParam( PARAMETER_USER_GUID )
     String strUserGuid, @FormParam( PARAMETER_ID_STATUS_CRM )
     String strIdStatusCRM, @FormParam( PARAMETER_STATUS_TEXT )
-    String strStatusText, @FormParam( PARAMETER_DATA )
+    String strStatusText, @FormParam( PARAMETER_DEMAND_DATA )
     String strData, @Context
     HttpServletRequest request )
     {
@@ -244,7 +244,7 @@ public class CRMRest
     public String doUpdateDemand( @FormParam( PARAMETER_ID_DEMAND )
     String strIdDemand, @FormParam( PARAMETER_ID_STATUS_CRM )
     String strIdStatusCRM, @FormParam( PARAMETER_STATUS_TEXT )
-    String strStatusText, @FormParam( PARAMETER_DATA )
+    String strStatusText, @FormParam( PARAMETER_DEMAND_DATA )
     String strData, @Context
     HttpServletRequest request )
     {
