@@ -36,6 +36,15 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
                 </request>
             </method>
         </resource>
+        <resource path="demand/delete">
+            <method name="POST" >
+                <request>
+                    <representation mediaType="application/x-www-form-urlencoded">
+                        <param name="id_demand" type="xsd:int" style="query" required="true"/>
+                    </representation>
+                </request>
+            </method>
+        </resource>
         <resource path="demand/notify">
             <method name="POST" >
                 <request>

@@ -118,6 +118,7 @@ public class CRMRest
     private static final String PATH_WADL = "wadl";
     private static final String PATH_CREATE_DEMAND = "demand/create";
     private static final String PATH_UPDATE_DEMAND = "demand/update";
+    private static final String PATH_DELETE_DEMAND = "demand/delete";
     private static final String PATH_VIEW_DEMAND = "demand/{id_demand}";
     private static final String PATH_NOTIFY = "demand/notify";
 
@@ -283,11 +284,45 @@ public class CRMRest
     }
 
     /**
+     * Delete a demand
+     * @param strIdDemand the id demand
+     * @return the id of the demand
+     */
+    @POST
+    @Path( PATH_DELETE_DEMAND )
+    @Produces( MediaType.TEXT_HTML )
+    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    public String doDeleteDemand( @FormParam( PARAMETER_ID_DEMAND )
+    String strIdDemand )
+    {
+        if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
+        {
+            int nIdDemand = Integer.parseInt( strIdDemand );
+            Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
+
+            if ( demand != null )
+            {
+                CRMService.getService(  ).deleteDemand( nIdDemand );
+            }
+            else
+            {
+                AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_DEMAND );
+            }
+        }
+        else
+        {
+            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_MANDATORY_FIELDS );
+        }
+
+        return strIdDemand;
+    }
+
+    /**
      * Notification for a demand
      * @param strIdDemand the id demand
      * @param strNotificationObject the notification object
      * @param strNotificationMessage the notification message
-     * @param strSender the sender
+     * @param strNotificationSender the sender
      * @return the id demand
      */
     @POST
