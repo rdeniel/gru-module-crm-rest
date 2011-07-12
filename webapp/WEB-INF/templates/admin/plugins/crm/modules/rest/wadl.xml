@@ -52,6 +52,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
                         <param name="id_demand" type="xsd:int" style="query" required="true"/>
                         <param name="notification_object" type="xsd:string" style="query" required="true"/>
                         <param name="notification_message" type="xsd:string" style="query" required="false"/>
+                        <param name="notification_sender" type="xsd:string" style="query" required="false"/>
                     </representation>
                 </request>
             </method>
