@@ -6,11 +6,24 @@
         <base href="<%= AppPathService.getBaseUrl( request ) %>" />
         <link rel="stylesheet" type="text/css" href="css/portal_admin.css" title="lutece_admin" />
         <script type="text/javascript">
-            function onView(  ) {
-                var id = document.formGet.id_demand.value;
-                var format = document.formGet.format.value;
+            function onDemandView(  ) {
+                var id = document.formGetDemand.id_demand.value;
+                var format = document.formGetDemand.format.value;
                 document.location= 'rest/crm/demand/' + id + format;
             }
+
+            function onUserAttributesView(  ) {
+                var user_guid = document.formGetUserAttributes.user_guid.value;
+                var format = document.formGetUserAttributes.format.value;
+                document.location= 'rest/crm/user/' + user_guid + format;
+            }
+
+            function onUserAttributeView(  ) {
+                var user_guid = document.formGetUserAttribute.user_guid.value;
+                var attribute = document.formGetUserAttribute.attribute.value;
+                document.location= 'rest/crm/user/' + user_guid + '/' + attribute;
+            }
+            
         </script>
     </head>
     <body>
@@ -27,7 +40,7 @@
 	            
 	            <div class="highlight-box">
 	                <h2>View demand data</h2>
-	                <form name="formGet">
+	                <form name="formGetDemand">
 	                    <label for="id_demand">ID demand : </label>
 	                    <input type="text" name="id_demand" size="10" maxlength="255" />
 	                    <br/>
@@ -37,7 +50,7 @@
 	                        <option value=".json">JSON</option>
 	                    </select>
 	                    <br/>
-	                    <input class="button" type="button" value="View" onclick="javascript:onView(  )"/>
+	                    <input class="button" type="button" value="View" onclick="javascript:onDemandView(  )"/>
 	                </form>
 	            </div>
 	            
@@ -108,6 +121,35 @@
 	                    <input type="text" name="notification_sender" size="50" maxlength="255" />
 	                    <br />
 	                    <input class="button" type="submit" value="Send" />
+	                </form>
+	            </div>
+	            
+	            <div class="highlight-box">
+	                <h2>View CRM user attributes</h2>
+	                <form name="formGetUserAttributes">
+	                    <label for="user_guid">User GUID * : </label>
+	                    <input type="text" name="user_guid" />
+	                    <br/>
+	                    <label for="format">Format :</label>
+	                    <select name="format">
+	                        <option value=".xml">XML</option>
+	                        <option value=".json">JSON</option>
+	                    </select>
+	                    <br/>
+	                    <input class="button" type="button" value="View" onclick="javascript:onUserAttributesView(  )"/>
+	                </form>
+	            </div>
+	            
+	            <div class="highlight-box">
+	                <h2>View CRM user attribute</h2>
+	                <form name="formGetUserAttribute">
+	                    <label for="user_guid">User GUID * : </label>
+	                    <input type="text" name="user_guid" />
+	                    <br/>
+	                    <label for="attribute">Attribute :</label>
+	                    <input type="text" name="attribute" />
+	                    <br/>
+	                    <input class="button" type="button" value="View" onclick="javascript:onUserAttributeView(  )"/>
 	                </form>
 	            </div>
         	</div>

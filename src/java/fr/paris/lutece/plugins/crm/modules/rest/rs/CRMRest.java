@@ -41,8 +41,10 @@ import fr.paris.lutece.plugins.crm.service.CRMService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandStatusCRMService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandTypeService;
+import fr.paris.lutece.plugins.crm.service.user.CRMUserAttributesService;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
 import fr.paris.lutece.plugins.rest.util.json.JSONUtil;
+import fr.paris.lutece.plugins.rest.util.xml.XMLUtil;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -52,14 +54,14 @@ import fr.paris.lutece.util.date.DateUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.xml.XmlUtil;
 
-import freemarker.template.utility.StringUtil;
-
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -95,6 +97,7 @@ public class CRMRest
     private static final String PARAMETER_NOTIFICATION_OBJECT = "notification_object";
     private static final String PARAMETER_NOTIFICATION_MESSAGE = "notification_message";
     private static final String PARAMETER_NOTIFICATION_SENDER = "notification_sender";
+    private static final String PARAMETER_ATTRIBUTE = "attribute";
 
     // TAGS
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
@@ -107,6 +110,10 @@ public class CRMRest
     private static final String TAG_USER_GUID = "user-guid";
     private static final String TAG_DATE_MODIFICATION = "date-modification";
     private static final String TAG_NB_NOTIFICATIONS = "nb-notifications";
+    private static final String TAG_USER_ATTRIBUTES = "user-attributes";
+    private static final String TAG_USER_ATTRIBUTE = "user-attribute";
+    private static final String TAG_USER_ATTRIBUTE_KEY = "user-attribute-key";
+    private static final String TAG_USER_ATTRIBUTE_VALUE = "user-attribute-value";
 
     // MARKS
     private static final String MARK_BASE_URL = "base_url";
@@ -121,6 +128,8 @@ public class CRMRest
     private static final String PATH_DELETE_DEMAND = "demand/delete";
     private static final String PATH_VIEW_DEMAND = "demand/{id_demand}";
     private static final String PATH_NOTIFY = "demand/notify";
+    private static final String PATH_CRM_USER_ATTRIBUTES = "user/{user_guid}";
+    private static final String PATH_CRM_USER_ATTRIBUTE = "user/{user_guid}/{attribute}";
 
     // MESSAGES
     private static final String MESSAGE_CRM_REST = "CRM Rest - ";
@@ -385,7 +394,7 @@ public class CRMRest
 
                 XmlUtil.addElement( sbXML, TAG_ID_DEMAND, demand.getIdDemand(  ) );
                 XmlUtil.addElement( sbXML, TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
-                XmlUtil.addElement( sbXML, TAG_STATUS_TEXT, StringUtil.XMLEnc( demand.getStatusText(  ) ) );
+                XmlUtil.addElement( sbXML, TAG_STATUS_TEXT, demand.getStatusText(  ) );
                 XmlUtil.addElement( sbXML, TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
                 XmlUtil.addElement( sbXML, TAG_DATA, demand.getData(  ) );
                 XmlUtil.addElement( sbXML, TAG_USER_GUID, demand.getUserGuid(  ) );
@@ -399,11 +408,13 @@ public class CRMRest
             else
             {
                 AppLogService.error( MESSAGE_CRM_REST + MESSAGE_DEMAND_NOT_FOUND );
+                sbXML.append( XMLUtil.formatError( MESSAGE_DEMAND_NOT_FOUND, 3 ) );
             }
         }
         else
         {
             AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_DEMAND );
+            sbXML.append( XMLUtil.formatError( MESSAGE_INVALID_DEMAND, 3 ) );
         }
 
         return sbXML.toString(  );
@@ -432,7 +443,7 @@ public class CRMRest
                 JSONObject json = new JSONObject(  );
                 json.accumulate( TAG_ID_DEMAND, demand.getIdDemand(  ) );
                 json.accumulate( TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
-                json.accumulate( TAG_STATUS_TEXT, StringUtil.XMLEnc( demand.getStatusText(  ) ) );
+                json.accumulate( TAG_STATUS_TEXT, demand.getStatusText(  ) );
                 json.accumulate( TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
                 json.accumulate( TAG_DATA, demand.getData(  ) );
                 json.accumulate( TAG_USER_GUID, demand.getUserGuid(  ) );
@@ -458,5 +469,112 @@ public class CRMRest
         }
 
         return strJSON;
+    }
+
+    /**
+     * Get the CRMUser attributes in XML
+     * @param strUserGuid the user guid
+     * @return the CRMUser attributes
+     */
+    @GET
+    @Path( PATH_CRM_USER_ATTRIBUTES )
+    @Produces( MediaType.APPLICATION_XML )
+    public String getCRMUserAttributesXml( @PathParam( PARAMETER_USER_GUID )
+    String strUserGuid )
+    {
+        StringBuffer sbXML = new StringBuffer(  );
+
+        if ( StringUtils.isNotBlank( strUserGuid ) )
+        {
+            // sbXML.append( XmlUtil.getXmlHeader(  ) );
+            sbXML.append( XML_HEADER );
+            XmlUtil.beginElement( sbXML, TAG_USER_ATTRIBUTES );
+
+            Map<String, String> listAttributes = CRMUserAttributesService.getService(  ).getAttributes( strUserGuid );
+
+            for ( Entry<String, String> attribute : listAttributes.entrySet(  ) )
+            {
+                XmlUtil.beginElement( sbXML, TAG_USER_ATTRIBUTE );
+                XmlUtil.addElement( sbXML, TAG_USER_ATTRIBUTE_KEY, attribute.getKey(  ) );
+                XmlUtil.addElement( sbXML, TAG_USER_ATTRIBUTE_VALUE, attribute.getValue(  ) );
+                XmlUtil.endElement( sbXML, TAG_USER_ATTRIBUTE );
+            }
+
+            XmlUtil.endElement( sbXML, TAG_USER_ATTRIBUTES );
+        }
+        else
+        {
+            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER_GUID );
+            sbXML.append( XMLUtil.formatError( MESSAGE_INVALID_USER_GUID, 3 ) );
+        }
+
+        return sbXML.toString(  );
+    }
+
+    /**
+     * Get the CRMUser attributes in JSON
+     * @param strUserGuid the user guid
+     * @return the attributes
+     */
+    @GET
+    @Path( PATH_CRM_USER_ATTRIBUTES )
+    @Produces( MediaType.APPLICATION_JSON )
+    public String getCRMUserAttributesJson( @PathParam( PARAMETER_USER_GUID )
+    String strUserGuid )
+    {
+        String strJSON = StringUtils.EMPTY;
+
+        if ( StringUtils.isNotBlank( strUserGuid ) )
+        {
+            JSONObject jsonAttributes = new JSONObject(  );
+            JSONArray jsonArray = new JSONArray(  );
+
+            Map<String, String> listAttributes = CRMUserAttributesService.getService(  ).getAttributes( strUserGuid );
+
+            for ( Entry<String, String> attribute : listAttributes.entrySet(  ) )
+            {
+                JSONObject jsonAttribute = new JSONObject(  );
+                jsonAttribute.accumulate( TAG_USER_ATTRIBUTE_KEY, attribute.getKey(  ) );
+                jsonAttribute.accumulate( TAG_USER_ATTRIBUTE_VALUE, attribute.getValue(  ) );
+                jsonArray.add( jsonAttribute );
+            }
+
+            jsonAttributes.accumulate( TAG_USER_ATTRIBUTES, jsonArray );
+            strJSON = jsonAttributes.toString( 4 );
+        }
+        else
+        {
+            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER_GUID );
+            strJSON = JSONUtil.formatError( MESSAGE_INVALID_USER_GUID, 3 );
+        }
+
+        return strJSON;
+    }
+
+    /**
+     * Get the CRMUser attribute value
+     * @param strUserGuid the user guid
+     * @param strAttribute the attribute
+     * @return the attribute value
+     */
+    @GET
+    @Path( PATH_CRM_USER_ATTRIBUTE )
+    @Produces( MediaType.TEXT_PLAIN )
+    public String getCRMUserAttribute( @PathParam( PARAMETER_USER_GUID )
+    String strUserGuid, @PathParam( PARAMETER_ATTRIBUTE )
+    String strAttribute )
+    {
+        String strAttributeValue = StringUtils.EMPTY;
+
+        if ( StringUtils.isNotBlank( strUserGuid ) )
+        {
+            strAttributeValue = CRMUserAttributesService.getService(  ).getAttribute( strUserGuid, strAttribute );
+        }
+        else
+        {
+            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER_GUID );
+        }
+
+        return strAttributeValue;
     }
 }

@@ -57,6 +57,21 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
                 </request>
             </method>
         </resource>
+        <resource path="user/{user_guid}">
+            <method name="GET" >
+                <response>
+                    <representation mediaType="application/xml"/>
+                    <representation mediaType="application/json"/>
+                </response>
+            </method>
+        </resource>
+        <resource path="user/{user_guid}/{attribute}">
+            <method name="GET" >
+                <response>
+                    <representation mediaType="text/plain"/>
+                </response>
+            </method>
+        </resource>
     </resources>
 </application>
 
