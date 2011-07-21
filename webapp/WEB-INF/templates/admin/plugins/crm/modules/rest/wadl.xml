@@ -24,6 +24,19 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
                 </request>
             </method>
         </resource>
+        <resource path="demand/create">
+            <method name="POST" >
+                <request>
+                    <representation mediaType="application/x-www-form-urlencoded">
+                        <param name="id_demand_type" type="xsd:int" style="query" required="true"/>
+                        <param name="id_crm_user" type="xsd:int" style="query" required="true"/>
+                        <param name="data" type="xsd:string" style="query" required="false"/>
+                        <param name="status_text" type="xsd:string" style="query" required="false"/>
+                        <param name="id_status_crm" type="xsd:int" style="query" required="true"/>
+                    </representation>
+                </request>
+            </method>
+        </resource>
         <resource path="demand/update">
             <method name="POST" >
                 <request>

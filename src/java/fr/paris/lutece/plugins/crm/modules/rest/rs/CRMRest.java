@@ -36,17 +36,17 @@ package fr.paris.lutece.plugins.crm.modules.rest.rs;
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandStatusCRM;
 import fr.paris.lutece.plugins.crm.business.demand.DemandType;
+import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.crm.service.CRMPlugin;
 import fr.paris.lutece.plugins.crm.service.CRMService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandStatusCRMService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandTypeService;
 import fr.paris.lutece.plugins.crm.service.user.CRMUserAttributesService;
+import fr.paris.lutece.plugins.crm.service.user.CRMUserService;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
 import fr.paris.lutece.plugins.rest.util.json.JSONUtil;
 import fr.paris.lutece.plugins.rest.util.xml.XMLUtil;
-import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -98,6 +98,7 @@ public class CRMRest
     private static final String PARAMETER_NOTIFICATION_MESSAGE = "notification_message";
     private static final String PARAMETER_NOTIFICATION_SENDER = "notification_sender";
     private static final String PARAMETER_ATTRIBUTE = "attribute";
+    private static final String PARAMETER_ID_CRM_USER = "id_crm_user";
 
     // TAGS
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
@@ -123,7 +124,8 @@ public class CRMRest
 
     // PATHS
     private static final String PATH_WADL = "wadl";
-    private static final String PATH_CREATE_DEMAND = "demand/create";
+    private static final String PATH_CREATE_DEMAND_BY_USER_GUID = "demand/createByUserGuid";
+    private static final String PATH_CREATE_DEMAND_BY_ID_CRM_USER = "demand/createByIdCRMUser";
     private static final String PATH_UPDATE_DEMAND = "demand/update";
     private static final String PATH_DELETE_DEMAND = "demand/delete";
     private static final String PATH_VIEW_DEMAND = "demand/{id_demand}";
@@ -136,7 +138,7 @@ public class CRMRest
     private static final String MESSAGE_MANDATORY_FIELDS = "Every mandatory fields are not filled.";
     private static final String MESSAGE_INVALID_DEMAND_TYPE = "Invalid ID demand type.";
     private static final String MESSAGE_INVALID_DEMAND = "Invalid ID demand.";
-    private static final String MESSAGE_INVALID_USER_GUID = "Invalid User GUID.";
+    private static final String MESSAGE_INVALID_USER = "Invalid User.";
     private static final String MESSAGE_DEMAND_NOT_FOUND = "Demand not found";
     private static final String MESSAGE_INVALID_ID_STATUS_CRM = "Invalid ID status CRM";
 
@@ -179,10 +181,10 @@ public class CRMRest
      * @return the id of the newly created demand
      */
     @POST
-    @Path( PATH_CREATE_DEMAND )
+    @Path( PATH_CREATE_DEMAND_BY_USER_GUID )
     @Produces( MediaType.TEXT_HTML )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doCreateDemand( @FormParam( PARAMETER_ID_DEMAND_TYPE )
+    public String doCreateDemandByUserGuid( @FormParam( PARAMETER_ID_DEMAND_TYPE )
     String strIdDemandType, @FormParam( PARAMETER_USER_GUID )
     String strUserGuid, @FormParam( PARAMETER_ID_STATUS_CRM )
     String strIdStatusCRM, @FormParam( PARAMETER_STATUS_TEXT )
@@ -192,42 +194,89 @@ public class CRMRest
     {
         String strIdDemand = "-1";
 
-        if ( StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) &&
-                StringUtils.isNotBlank( strUserGuid ) && StringUtils.isNotBlank( strIdStatusCRM ) &&
-                StringUtils.isNumeric( strIdStatusCRM ) )
+        if ( StringUtils.isNotBlank( strUserGuid ) )
         {
-            int nIdDemandType = Integer.parseInt( strIdDemandType );
-            DemandType demandType = DemandTypeService.getService(  ).findByPrimaryKey( nIdDemandType );
+            CRMUser crmUser = CRMUserService.getService(  ).findByUserGuid( strUserGuid );
 
-            if ( demandType != null )
+            if ( crmUser != null )
             {
-                int nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
-                DemandStatusCRM statusCRM = DemandStatusCRMService.getService(  )
-                                                                  .getStatusCRM( nIdStatusCRM, request.getLocale(  ) );
+                strIdDemand = doCreateDemandByIdCRMUser( strIdDemandType, Integer.toString( crmUser.getIdCRMUser(  ) ),
+                        strIdStatusCRM, strStatusText, strData, request );
+            }
+            else
+            {
+                AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER );
+            }
+        }
+        else
+        {
+            AppLogService.error( MESSAGE_MANDATORY_FIELDS );
+        }
 
-                if ( statusCRM != null )
+        return strIdDemand;
+    }
+
+    /**
+     * Create a new demand
+     * @param strIdDemandType the demand type id
+     * @param strIdCRMUser the ID CRM user
+     * @param strIdStatusCRM the id status crm
+     * @param strStatusText the status text
+     * @param strData the data
+     * @param request {@link HttpServletRequest}
+     * @return the id of the newly created demand
+     */
+    @POST
+    @Path( PATH_CREATE_DEMAND_BY_ID_CRM_USER )
+    @Produces( MediaType.TEXT_HTML )
+    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    public String doCreateDemandByIdCRMUser( @FormParam( PARAMETER_ID_DEMAND_TYPE )
+    String strIdDemandType, @FormParam( PARAMETER_ID_CRM_USER )
+    String strIdCRMUser, @FormParam( PARAMETER_ID_STATUS_CRM )
+    String strIdStatusCRM, @FormParam( PARAMETER_STATUS_TEXT )
+    String strStatusText, @FormParam( PARAMETER_DEMAND_DATA )
+    String strData, @Context
+    HttpServletRequest request )
+    {
+        String strIdDemand = "-1";
+
+        if ( StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) &&
+                StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) &&
+                StringUtils.isNotBlank( strIdCRMUser ) && StringUtils.isNumeric( strIdCRMUser ) )
+        {
+            int nIdCRMUser = Integer.parseInt( strIdCRMUser );
+            CRMUser crmUser = CRMUserService.getService(  ).findByPrimaryKey( nIdCRMUser );
+
+            if ( crmUser != null )
+            {
+                int nIdDemandType = Integer.parseInt( strIdDemandType );
+                DemandType demandType = DemandTypeService.getService(  ).findByPrimaryKey( nIdDemandType );
+
+                if ( demandType != null )
                 {
-                    LuteceUser user = SecurityService.getInstance(  ).getUser( strUserGuid );
+                    int nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
+                    DemandStatusCRM statusCRM = DemandStatusCRMService.getService(  )
+                                                                      .getStatusCRM( nIdStatusCRM, request.getLocale(  ) );
 
-                    if ( user != null )
+                    if ( statusCRM != null )
                     {
                         strIdDemand = Integer.toString( CRMService.getService(  )
-                                                                  .registerDemand( nIdDemandType, strUserGuid, strData,
+                                                                  .registerDemand( nIdDemandType, nIdCRMUser, strData,
                                     strStatusText, nIdStatusCRM ) );
                     }
                     else
                     {
-                        AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER_GUID );
+                        AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_ID_STATUS_CRM );
                     }
                 }
                 else
                 {
-                    AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_ID_STATUS_CRM );
+                    AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_DEMAND_TYPE );
                 }
             }
             else
             {
-                AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_DEMAND_TYPE );
+                AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER );
             }
         }
         else
@@ -397,7 +446,7 @@ public class CRMRest
                 XmlUtil.addElement( sbXML, TAG_STATUS_TEXT, demand.getStatusText(  ) );
                 XmlUtil.addElement( sbXML, TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
                 XmlUtil.addElement( sbXML, TAG_DATA, demand.getData(  ) );
-                XmlUtil.addElement( sbXML, TAG_USER_GUID, demand.getUserGuid(  ) );
+                XmlUtil.addElement( sbXML, TAG_USER_GUID, demand.getIdCRMUser(  ) );
 
                 String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
                 XmlUtil.addElement( sbXML, TAG_DATE_MODIFICATION, strDateModification );
@@ -446,7 +495,7 @@ public class CRMRest
                 json.accumulate( TAG_STATUS_TEXT, demand.getStatusText(  ) );
                 json.accumulate( TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
                 json.accumulate( TAG_DATA, demand.getData(  ) );
-                json.accumulate( TAG_USER_GUID, demand.getUserGuid(  ) );
+                json.accumulate( TAG_USER_GUID, demand.getIdCRMUser(  ) );
 
                 String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
                 json.accumulate( TAG_DATE_MODIFICATION, strDateModification );
@@ -504,8 +553,8 @@ public class CRMRest
         }
         else
         {
-            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER_GUID );
-            sbXML.append( XMLUtil.formatError( MESSAGE_INVALID_USER_GUID, 3 ) );
+            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER );
+            sbXML.append( XMLUtil.formatError( MESSAGE_INVALID_USER, 3 ) );
         }
 
         return sbXML.toString(  );
@@ -544,8 +593,8 @@ public class CRMRest
         }
         else
         {
-            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER_GUID );
-            strJSON = JSONUtil.formatError( MESSAGE_INVALID_USER_GUID, 3 );
+            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER );
+            strJSON = JSONUtil.formatError( MESSAGE_INVALID_USER, 3 );
         }
 
         return strJSON;
@@ -572,7 +621,7 @@ public class CRMRest
         }
         else
         {
-            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER_GUID );
+            AppLogService.error( MESSAGE_CRM_REST + MESSAGE_INVALID_USER );
         }
 
         return strAttributeValue;

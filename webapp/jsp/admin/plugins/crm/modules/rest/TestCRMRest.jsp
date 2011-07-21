@@ -55,10 +55,13 @@
 	            </div>
 	            
 	            <div class="highlight-box">
-	                <h2>Create a demand</h2>
-	                <form action="rest/crm/demand/create" method="post">
+	                <h2>Create a demand with the user guid</h2>
+	                <form action="rest/crm/demand/createByUserGuid" method="post">
 	                    <label for="id_demand_type">ID demand type * : </label>
 	                    <input type="text" name="id_demand_type" />
+	                    <br />
+	                    <label for="user_guid">User GUID * :</label>
+	                    <input type="text" name="user_guid" />
 	                    <br />
 	                    <label for="id_status_crm">ID Status CRM * : </label>
 	                    <input type="text" name="id_status_crm" size="1" maxlength="1" />
@@ -66,8 +69,27 @@
 	                    <label for="status_text">Status text: </label>
 	                    <input type="text" name="status_text" />
 	                    <br />
-	                    <label for="user_guid">User GUID * :</label>
-	                    <input type="text" name="user_guid" />
+	                    <label for="data">Data : </label>
+	                    <input type="text" name="data" />
+	                    <br />
+	                    <input class="button" type="submit" value="Create" />
+	                </form>
+	            </div>
+	            
+	            <div class="highlight-box">
+	                <h2>Create a demand with the ID CRM User</h2>
+	                <form action="rest/crm/demand/createByIdCRMUser" method="post">
+	                    <label for="id_demand_type">ID demand type * : </label>
+	                    <input type="text" name="id_demand_type" />
+	                    <br />
+	                    <label for="id_crm_user">ID CRM user * :</label>
+	                    <input type="text" name="id_crm_user" />
+	                    <br />
+	                    <label for="id_status_crm">ID Status CRM * : </label>
+	                    <input type="text" name="id_status_crm" size="1" maxlength="1" />
+	                    <br />
+	                    <label for="status_text">Status text: </label>
+	                    <input type="text" name="status_text" />
 	                    <br />
 	                    <label for="data">Data : </label>
 	                    <input type="text" name="data" />
