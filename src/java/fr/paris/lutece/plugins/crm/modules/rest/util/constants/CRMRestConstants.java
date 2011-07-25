@@ -1,0 +1,111 @@
+/*
+ * Copyright (c) 2002-2011, Mairie de Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
+package fr.paris.lutece.plugins.crm.modules.rest.util.constants;
+
+
+/**
+ *
+ * CRMRestConstants
+ *
+ */
+public final class CRMRestConstants
+{
+    // CONSTANTS
+    public static final String SLASH = "/";
+    public static final String INVALID_ID = "-1";
+
+    // PATHS
+    public static final String PATH_WADL = "wadl";
+    public static final String PATH_USER = "/user/";
+    public static final String PATH_NOTIFY = "/notify/";
+    public static final String PATH_DEMAND = "demand";
+    public static final String PATH_CRM_USER_ATTRIBUTES = "{user_guid}";
+    public static final String PATH_CRM_USER_ATTRIBUTE = "{user_guid}/{attribute}";
+    public static final String PATH_CREATE_DEMAND_BY_USER_GUID = PATH_DEMAND + "/createByUserGuid";
+    public static final String PATH_CREATE_DEMAND_BY_ID_CRM_USER = PATH_DEMAND + "/createByIdCRMUser";
+    public static final String PATH_UPDATE_DEMAND = PATH_DEMAND + "/update";
+    public static final String PATH_DELETE_DEMAND = PATH_DEMAND + "/delete";
+    public static final String PATH_VIEW_DEMAND = PATH_DEMAND + "/{id_demand}";
+
+    // TAGS
+    public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
+    public static final String TAG_USER_ATTRIBUTES = "user-attributes";
+    public static final String TAG_USER_ATTRIBUTE = "user-attribute";
+    public static final String TAG_USER_ATTRIBUTE_KEY = "user-attribute-key";
+    public static final String TAG_USER_ATTRIBUTE_VALUE = "user-attribute-value";
+    public static final String TAG_DEMAND = "demand";
+    public static final String TAG_ID_DEMAND = "id-demand";
+    public static final String TAG_ID_DEMAND_TYPE = "id-demand-type";
+    public static final String TAG_STATUS_TEXT = "status-text";
+    public static final String TAG_ID_STATUS_CRM = "id-status-crm";
+    public static final String TAG_DATA = "data";
+    public static final String TAG_USER_GUID = "user-guid";
+    public static final String TAG_DATE_MODIFICATION = "date-modification";
+    public static final String TAG_NB_NOTIFICATIONS = "nb-notifications";
+
+    // PARAMETERS
+    public static final String PARAMETER_USER_GUID = "user_guid";
+    public static final String PARAMETER_ATTRIBUTE = "attribute";
+    public static final String PARAMETER_NOTIFICATION_OBJECT = "notification_object";
+    public static final String PARAMETER_NOTIFICATION_MESSAGE = "notification_message";
+    public static final String PARAMETER_NOTIFICATION_SENDER = "notification_sender";
+    public static final String PARAMETER_ID_DEMAND = "id_demand";
+    public static final String PARAMETER_ID_DEMAND_TYPE = "id_demand_type";
+    public static final String PARAMETER_DEMAND_DATA = "demand_data";
+    public static final String PARAMETER_STATUS_TEXT = "status_text";
+    public static final String PARAMETER_ID_STATUS_CRM = "id_status_crm";
+    public static final String PARAMETER_ID_CRM_USER = "id_crm_user";
+
+    // MESSAGES
+    public static final String MESSAGE_CRM_REST = "CRM Rest - ";
+    public static final String MESSAGE_INVALID_USER = "Invalid User.";
+    public static final String MESSAGE_MANDATORY_FIELDS = "Every mandatory fields are not filled.";
+    public static final String MESSAGE_INVALID_DEMAND = "Invalid ID demand.";
+    public static final String MESSAGE_INVALID_DEMAND_TYPE = "Invalid ID demand type.";
+    public static final String MESSAGE_DEMAND_NOT_FOUND = "Demand not found";
+    public static final String MESSAGE_INVALID_ID_STATUS_CRM = "Invalid ID status CRM";
+
+    // MARKS
+    public static final String MARK_BASE_URL = "base_url";
+
+    // TEMPLATES
+    public static final String TEMPLATE_WADL = "admin/plugins/crm/modules/rest/wadl.xml";
+
+    /**
+     * Private constructor
+     */
+    private CRMRestConstants(  )
+    {
+    }
+}

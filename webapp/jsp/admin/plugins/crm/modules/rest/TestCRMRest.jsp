@@ -11,19 +11,6 @@
                 var format = document.formGetDemand.format.value;
                 document.location= 'rest/crm/demand/' + id + format;
             }
-
-            function onUserAttributesView(  ) {
-                var user_guid = document.formGetUserAttributes.user_guid.value;
-                var format = document.formGetUserAttributes.format.value;
-                document.location= 'rest/crm/user/' + user_guid + format;
-            }
-
-            function onUserAttributeView(  ) {
-                var user_guid = document.formGetUserAttribute.user_guid.value;
-                var attribute = document.formGetUserAttribute.attribute.value;
-                document.location= 'rest/crm/user/' + user_guid + '/' + attribute;
-            }
-            
         </script>
     </head>
     <body>
@@ -124,54 +111,6 @@
 	                    <input type="text" name="id_demand" />
 	                    <br />
 	                    <input class="button" type="submit" value="Delete" />
-	                </form>
-	            </div>
-	            
-	            <div class="highlight-box">
-	                <h2>Notify</h2>
-	                <form action="rest/crm/demand/notify" method="post">
-	                    <label for="id_demand">ID demand * : </label>
-	                    <input type="text" name="id_demand" />
-	                    <br />
-	                    <label for="notification_object">Object * : </label>
-	                    <input type="text" name="notification_object" size="50" maxlength="255" />
-	                    <br />
-	                    <label for="notification_message">Message : </label>
-	                    <textarea name="notification_message"></textarea>
-	                    <br />
-	                    <label for="notification_sender">Sender : </label>
-	                    <input type="text" name="notification_sender" size="50" maxlength="255" />
-	                    <br />
-	                    <input class="button" type="submit" value="Send" />
-	                </form>
-	            </div>
-	            
-	            <div class="highlight-box">
-	                <h2>View CRM user attributes</h2>
-	                <form name="formGetUserAttributes">
-	                    <label for="user_guid">User GUID * : </label>
-	                    <input type="text" name="user_guid" />
-	                    <br/>
-	                    <label for="format">Format :</label>
-	                    <select name="format">
-	                        <option value=".xml">XML</option>
-	                        <option value=".json">JSON</option>
-	                    </select>
-	                    <br/>
-	                    <input class="button" type="button" value="View" onclick="javascript:onUserAttributesView(  )"/>
-	                </form>
-	            </div>
-	            
-	            <div class="highlight-box">
-	                <h2>View CRM user attribute</h2>
-	                <form name="formGetUserAttribute">
-	                    <label for="user_guid">User GUID * : </label>
-	                    <input type="text" name="user_guid" />
-	                    <br/>
-	                    <label for="attribute">Attribute :</label>
-	                    <input type="text" name="attribute" />
-	                    <br/>
-	                    <input class="button" type="button" value="View" onclick="javascript:onUserAttributeView(  )"/>
 	                </form>
 	            </div>
         	</div>

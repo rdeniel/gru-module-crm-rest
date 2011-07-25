@@ -58,7 +58,7 @@ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
                 </request>
             </method>
         </resource>
-        <resource path="demand/notify">
+        <resource path="notify/demand">
             <method name="POST" >
                 <request>
                     <representation mediaType="application/x-www-form-urlencoded">
