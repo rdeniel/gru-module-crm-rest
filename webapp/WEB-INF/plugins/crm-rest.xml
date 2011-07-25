@@ -18,8 +18,7 @@
     </core-version-dependency>
     <db-pool-required>0</db-pool-required>
 
-	<!-- REST security -->
-	<!-- 
+	<!-- REST security : Comment the filters if you want to test the REST service with the given JSP -->
 	<filters>
        <filter>
            <filter-name>CRMRestSecurity</filter-name>
@@ -42,5 +41,4 @@
            </init-param>
        </filter>
    </filters>
-    -->
 </plug-in>
