@@ -251,19 +251,23 @@ public class CRMRest
     String strData, @Context
     HttpServletRequest request )
     {
-        if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) &&
-                StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) )
+        if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
             Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
 
             if ( demand != null )
             {
-                int nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
-                DemandStatusCRM statusCRM = DemandStatusCRMService.getService(  )
-                                                                  .getStatusCRM( nIdStatusCRM, request.getLocale(  ) );
+                int nIdStatusCRM = CRMRestConstants.INVALID_ID_INT;
+                DemandStatusCRM statusCRM = null;
 
-                if ( statusCRM != null )
+                if ( StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) )
+                {
+                    nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
+                    statusCRM = DemandStatusCRMService.getService(  ).getStatusCRM( nIdStatusCRM, request.getLocale(  ) );
+                }
+
+                if ( ( statusCRM != null ) || ( nIdStatusCRM == CRMRestConstants.INVALID_ID_INT ) )
                 {
                     CRMService.getService(  ).setStatus( nIdDemand, strData, strStatusText, nIdStatusCRM );
                 }
