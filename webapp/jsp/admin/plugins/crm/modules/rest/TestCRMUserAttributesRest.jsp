@@ -20,7 +20,7 @@
 
             function onGetUserGuidView(  ) {
                 var id_crm_user = document.formGetUserGuid.id_crm_user.value;
-                document.location= 'rest/crm/user/' + id_crm_user + '/user_guid/';
+                document.location= 'rest/crm/user/' + id_crm_user + '/user_guid';
             }
         </script>
     </head>

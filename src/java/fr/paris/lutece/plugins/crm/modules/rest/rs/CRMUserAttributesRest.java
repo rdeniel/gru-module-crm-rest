@@ -180,7 +180,7 @@ public class CRMUserAttributesRest
      * @return the user guid
      */
     @GET
-    @Path( CRMRestConstants.PATH_GET_USER_GUID )
+    @Path( CRMRestConstants.PATH_GET_USER_GUID_FROM_ID_CRM_USER )
     @Produces( MediaType.TEXT_PLAIN )
     public String getUserGuidFromIdCRMUser( @PathParam( CRMRestConstants.PARAMETER_ID_CRM_USER )
     String strIdCRMUser )

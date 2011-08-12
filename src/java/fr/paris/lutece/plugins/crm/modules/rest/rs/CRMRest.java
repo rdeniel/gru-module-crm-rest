@@ -426,4 +426,41 @@ public class CRMRest
 
         return strJSON;
     }
+
+    /**
+     * Get the user guid from a given id demand
+     * @param strIdDemand the id demand
+     * @return the user guid
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_GET_USER_GUID_FROM_ID_DEMAND )
+    @Produces( MediaType.TEXT_PLAIN )
+    public String getUserGuidFromIdDemand( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND )
+    String strIdDemand )
+    {
+        String strUserGuid = StringUtils.EMPTY;
+
+        if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
+        {
+            int nIdDemand = Integer.parseInt( strIdDemand );
+            Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
+
+            if ( demand != null )
+            {
+                int nIdCRMUser = demand.getIdCRMUser(  );
+                CRMUser user = CRMUserService.getService(  ).findByPrimaryKey( nIdCRMUser );
+
+                if ( user != null )
+                {
+                    strUserGuid = user.getUserGuid(  );
+                }
+            }
+        }
+        else
+        {
+            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_USER );
+        }
+
+        return strUserGuid;
+    }
 }

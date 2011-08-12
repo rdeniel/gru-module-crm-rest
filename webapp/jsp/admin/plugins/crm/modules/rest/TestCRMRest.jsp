@@ -11,6 +11,11 @@
                 var format = document.formGetDemand.format.value;
                 document.location= 'rest/crm/demand/' + id + format;
             }
+
+            function onGetUserGuidView(  ) {
+                var id_demand = document.formGetUserGuid.id_demand.value;
+                document.location= 'rest/crm/demand/' + id_demand + '/user_guid';
+            }
         </script>
     </head>
     <body>
@@ -38,6 +43,16 @@
 	                    </select>
 	                    <br/>
 	                    <input class="button" type="button" value="View" onclick="javascript:onDemandView(  )"/>
+	                </form>
+	            </div>
+	            
+	            <div class="highlight-box">
+	                <h2>Get User GUID</h2>
+	                <form name="formGetUserGuid">
+	                    <label for="id_demand">ID demand * : </label>
+	                    <input type="text" name="id_demand" />
+	                    <br/>
+	                    <input class="button" type="button" value="View" onclick="javascript:onGetUserGuidView(  )"/>
 	                </form>
 	            </div>
 	            
