@@ -53,11 +53,13 @@ public final class CRMRestConstants
     public static final String PATH_DEMAND = "demand";
     public static final String PATH_CRM_USER_ATTRIBUTES = "{user_guid}";
     public static final String PATH_CRM_USER_ATTRIBUTE = "{user_guid}/{attribute}";
+    public static final String PATH_ID_CRM_USER = "{id_crm_user}";
     public static final String PATH_CREATE_DEMAND_BY_USER_GUID = PATH_DEMAND + "/createByUserGuid";
     public static final String PATH_CREATE_DEMAND_BY_ID_CRM_USER = PATH_DEMAND + "/createByIdCRMUser";
     public static final String PATH_UPDATE_DEMAND = PATH_DEMAND + "/update";
     public static final String PATH_DELETE_DEMAND = PATH_DEMAND + "/delete";
     public static final String PATH_VIEW_DEMAND = PATH_DEMAND + "/{id_demand}";
+    public static final String PATH_GET_USER_GUID = PATH_ID_CRM_USER + "/user_guid";
 
     // TAGS
     public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";

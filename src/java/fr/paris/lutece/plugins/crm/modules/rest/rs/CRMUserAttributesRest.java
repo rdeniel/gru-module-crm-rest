@@ -33,9 +33,11 @@
  */
 package fr.paris.lutece.plugins.crm.modules.rest.rs;
 
+import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.crm.modules.rest.util.constants.CRMRestConstants;
 import fr.paris.lutece.plugins.crm.service.CRMPlugin;
 import fr.paris.lutece.plugins.crm.service.user.CRMUserAttributesService;
+import fr.paris.lutece.plugins.crm.service.user.CRMUserService;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
 import fr.paris.lutece.plugins.rest.util.json.JSONUtil;
 import fr.paris.lutece.plugins.rest.util.xml.XMLUtil;
@@ -170,5 +172,36 @@ public class CRMUserAttributesRest
         }
 
         return strAttributeValue;
+    }
+
+    /**
+     * Get the user guid from a given id crm user
+     * @param strIdCRMUser the id crm user
+     * @return the user guid
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_GET_USER_GUID )
+    @Produces( MediaType.TEXT_PLAIN )
+    public String getUserGuidFromIdCRMUser( @PathParam( CRMRestConstants.PARAMETER_ID_CRM_USER )
+    String strIdCRMUser )
+    {
+        String strUserGuid = StringUtils.EMPTY;
+
+        if ( StringUtils.isNotBlank( strIdCRMUser ) && StringUtils.isNumeric( strIdCRMUser ) )
+        {
+            int nIdCRMUser = Integer.parseInt( strIdCRMUser );
+            CRMUser user = CRMUserService.getService(  ).findByPrimaryKey( nIdCRMUser );
+
+            if ( user != null )
+            {
+                strUserGuid = user.getUserGuid(  );
+            }
+        }
+        else
+        {
+            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_USER );
+        }
+
+        return strUserGuid;
     }
 }

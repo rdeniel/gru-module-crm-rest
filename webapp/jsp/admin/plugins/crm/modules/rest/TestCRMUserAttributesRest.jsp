@@ -17,6 +17,11 @@
                 var attribute = document.formGetUserAttribute.attribute.value;
                 document.location= 'rest/crm/user/' + user_guid + '/' + attribute;
             }
+
+            function onGetUserGuidView(  ) {
+                var id_crm_user = document.formGetUserGuid.id_crm_user.value;
+                document.location= 'rest/crm/user/' + id_crm_user + '/user_guid/';
+            }
         </script>
     </head>
     <body>
@@ -49,6 +54,16 @@
 	                    <input type="text" name="attribute" />
 	                    <br/>
 	                    <input class="button" type="button" value="View" onclick="javascript:onUserAttributeView(  )"/>
+	                </form>
+	            </div>
+	            
+	            <div class="highlight-box">
+	                <h2>Get User GUID</h2>
+	                <form name="formGetUserGuid">
+	                    <label for="id_crm_user">ID CRM User * : </label>
+	                    <input type="text" name="id_crm_user" />
+	                    <br/>
+	                    <input class="button" type="button" value="View" onclick="javascript:onGetUserGuidView(  )"/>
 	                </form>
 	            </div>
         	</div>
