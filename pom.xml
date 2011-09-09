@@ -15,6 +15,9 @@
             <id>luteceSnapshot</id>
             <name>luteceSnapshot</name>
             <url>http://dev.lutece.paris.fr/snapshot_repository</url>
+            <releases>
+            	<enabled>false</enabled>
+            </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -26,6 +29,9 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <releases>
+            	<enabled>true</enabled>
+            </releases>
         </repository>
     </repositories>
 	
