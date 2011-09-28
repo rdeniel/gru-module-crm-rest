@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.crm.modules.rest.rs;
 
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
+import fr.paris.lutece.plugins.crm.modules.rest.util.StringUtil;
 import fr.paris.lutece.plugins.crm.modules.rest.util.constants.CRMRestConstants;
 import fr.paris.lutece.plugins.crm.service.CRMPlugin;
 import fr.paris.lutece.plugins.crm.service.CRMService;
@@ -82,13 +83,16 @@ public class CRMNotificationRest
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) &&
                 StringUtils.isNotBlank( strNotificationObject ) )
         {
+            String strObject = StringUtil.convertString( strNotificationObject );
+            String strMessage = StringUtil.convertString( strNotificationMessage );
+            String strSender = StringUtil.convertString( strNotificationSender );
+
             int nIdDemand = Integer.parseInt( strIdDemand );
             Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
 
             if ( demand != null )
             {
-                CRMService.getService(  )
-                          .notify( nIdDemand, strNotificationObject, strNotificationMessage, strNotificationSender );
+                CRMService.getService(  ).notify( nIdDemand, strObject, strMessage, strSender );
             }
             else
             {

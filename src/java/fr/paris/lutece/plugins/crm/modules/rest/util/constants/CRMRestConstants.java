@@ -43,6 +43,7 @@ public final class CRMRestConstants
 {
     // CONSTANTS
     public static final int INVALID_ID_INT = -1;
+    public static final int TRUE = 1;
     public static final String SLASH = "/";
     public static final String INVALID_ID = "-1";
 
@@ -90,6 +91,11 @@ public final class CRMRestConstants
     public static final String PARAMETER_STATUS_TEXT = "status_text";
     public static final String PARAMETER_ID_STATUS_CRM = "id_status_crm";
     public static final String PARAMETER_ID_CRM_USER = "id_crm_user";
+
+    // PROPERTIES
+    public static final String PROPERTY_ENCODING_ENABLE = "crm-rest.encoding.enable";
+    public static final String PROPERTY_ENCODING_FROM = "crm-rest.encoding.from";
+    public static final String PROPERTY_ENCODING_TO = "crm-rest.encoding.to";
 
     // MESSAGES
     public static final String MESSAGE_CRM_REST = "CRM Rest - ";

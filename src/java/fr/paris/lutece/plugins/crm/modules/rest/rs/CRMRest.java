@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandStatusCRM;
 import fr.paris.lutece.plugins.crm.business.demand.DemandType;
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
+import fr.paris.lutece.plugins.crm.modules.rest.util.StringUtil;
 import fr.paris.lutece.plugins.crm.modules.rest.util.constants.CRMRestConstants;
 import fr.paris.lutece.plugins.crm.service.CRMPlugin;
 import fr.paris.lutece.plugins.crm.service.CRMService;
@@ -141,8 +142,10 @@ public class CRMRest
 
             if ( crmUser != null )
             {
+                String strConvertedStatusText = StringUtil.convertString( strStatusText );
+                String strConvertedData = StringUtil.convertString( strData );
                 strIdDemand = doCreateDemandByIdCRMUser( strIdDemandType, Integer.toString( crmUser.getIdCRMUser(  ) ),
-                        strIdStatusCRM, strStatusText, strData, request );
+                        strIdStatusCRM, strConvertedStatusText, strConvertedData, request );
             }
             else
             {
@@ -202,9 +205,11 @@ public class CRMRest
 
                     if ( statusCRM != null )
                     {
+                        String strConvertedStatusText = StringUtil.convertString( strStatusText );
+                        String strConvertedData = StringUtil.convertString( strData );
                         strIdDemand = Integer.toString( CRMService.getService(  )
-                                                                  .registerDemand( nIdDemandType, nIdCRMUser, strData,
-                                    strStatusText, nIdStatusCRM ) );
+                                                                  .registerDemand( nIdDemandType, nIdCRMUser,
+                                    strConvertedData, strConvertedStatusText, nIdStatusCRM ) );
                     }
                     else
                     {
@@ -269,7 +274,10 @@ public class CRMRest
 
                 if ( ( statusCRM != null ) || ( nIdStatusCRM == CRMRestConstants.INVALID_ID_INT ) )
                 {
-                    CRMService.getService(  ).setStatus( nIdDemand, strData, strStatusText, nIdStatusCRM );
+                    String strConvertedStatusText = StringUtil.convertString( strStatusText );
+                    String strConvertedData = StringUtil.convertString( strData );
+                    CRMService.getService(  )
+                              .setStatus( nIdDemand, strConvertedData, strConvertedStatusText, nIdStatusCRM );
                 }
                 else
                 {
