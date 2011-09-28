@@ -27,7 +27,7 @@
 
            <init-param>
                <param-name>elementsSignature</param-name>
-               <param-value>id_demand_type,id_demand,id_crm_user,user_guid,id_status_crm,status_text,demand_data,notification_object,notification_sender</param-value>
+               <param-value>id_demand_type,id_demand,id_crm_user,user_guid,id_status_crm</param-value>
            </init-param>
 
            <init-param>
