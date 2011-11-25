@@ -73,7 +73,7 @@ public final class StringUtil
 
         String strConverted = null;
 
-        if ( bConversionEnable && StringUtils.isNotBlank( strEncodingTo ) )
+        if ( bConversionEnable && StringUtils.isNotBlank( strEncodingTo ) && ( strToConvert != null ) )
         {
             try
             {
@@ -81,7 +81,7 @@ public final class StringUtil
             }
             catch ( Exception e )
             {
-                AppLogService.error( e );
+                AppLogService.error( e.getMessage(  ), e );
             }
         }
 
