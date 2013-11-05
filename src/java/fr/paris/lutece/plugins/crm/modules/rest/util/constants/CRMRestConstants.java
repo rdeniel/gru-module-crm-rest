@@ -46,7 +46,8 @@ public final class CRMRestConstants
     public static final int TRUE = 1;
     public static final String SLASH = "/";
     public static final String INVALID_ID = "-1";
-
+    public static final String MEDIA_TYPE_JSON = "application/json";
+    public static final String MEDIA_TYPE_XML = "application/xml";
     // PATHS
     public static final String PATH_WADL = "wadl";
     public static final String PATH_USER = "/user/";
@@ -91,6 +92,8 @@ public final class CRMRestConstants
     public static final String PARAMETER_STATUS_TEXT = "status_text";
     public static final String PARAMETER_ID_STATUS_CRM = "id_status_crm";
     public static final String PARAMETER_ID_CRM_USER = "id_crm_user";
+    public static final String PARAMETER_MEDIA_TYPE = "media_type";
+
 
     // PROPERTIES
     public static final String PROPERTY_ENCODING_ENABLE = "crm-rest.encoding.enable";

@@ -71,6 +71,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -331,6 +332,27 @@ public class CRMRest
 
         return strIdDemand;
     }
+    
+    /**
+     * Get the demand in XML or demand JSON depending the value of strMediaType
+     * @param strIdDemand the id demand
+     * @param strMediaType the media type selected
+     * @return the demand
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_VIEW_DEMAND )
+    public String getDemand( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND )
+    String strIdDemand, @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE) String strMediaType )
+    {
+      if ( StringUtils.isNotBlank( strMediaType ) && strMediaType.equals(CRMRestConstants.MEDIA_TYPE_JSON) )
+        {
+        	return getDemandJson(strIdDemand);
+        	
+        }
+       return getDemandXML(strIdDemand);
+    }
+    
+    
 
     /**
      * Get the XML of the demand
