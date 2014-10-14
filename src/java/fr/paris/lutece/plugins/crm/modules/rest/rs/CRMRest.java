@@ -141,18 +141,22 @@ public class CRMRest
         {
             CRMUser crmUser = CRMUserService.getService(  ).findByUserGuid( strUserGuid );
 
-            if ( crmUser != null )
+            if ( crmUser == null )
             {
-                String strConvertedStatusText = StringUtil.convertString( strStatusText );
-                String strConvertedData = StringUtil.convertString( strData );
-                strIdDemand = doCreateDemandByIdCRMUser( strIdDemandType, Integer.toString( crmUser.getIdCRMUser(  ) ),
-                        strIdStatusCRM, strConvertedStatusText, strConvertedData, request );
+            	//if crm user does not exist create crm user
+        		crmUser=new CRMUser();
+        		crmUser.setUserGuid(strUserGuid);
+        		crmUser.setMustBeUpdated(true);
+        		crmUser.setIdCRMUser(CRMUserService.getService(  ).create(crmUser));
+        		
+                AppLogService.debug( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_USER );
             }
-            else
-            {
-                AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_USER );
-            }
-        }
+            
+            String strConvertedStatusText = StringUtil.convertString( strStatusText );
+            String strConvertedData = StringUtil.convertString( strData );
+            strIdDemand = doCreateDemandByIdCRMUser( strIdDemandType, Integer.toString( crmUser.getIdCRMUser(  ) ),
+                    strIdStatusCRM, strConvertedStatusText, strConvertedData, request );
+         }
         else
         {
             AppLogService.error( CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
