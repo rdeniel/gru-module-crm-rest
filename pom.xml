@@ -60,9 +60,9 @@
     </properties>
 	
     <scm>
-        <connection>scm:git:https://github.com/lutece-platform/lutece-crm-module-crm-rest.git</connection>
-        <developerConnection>scm:git:https://github.com/lutece-platform/lutece-crm-module-crm-rest.git</developerConnection>
-        <url>https://github.com/lutece-platform/lutece-crm-module-crm-rest.git</url>
+        <connection>scm:git:https://github.com/lutece-secteur-public/gru-module-crm-rest.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-secteur-public/gru-module-crm-rest.git</developerConnection>
+        <url>https://github.com/lutece-secteur-public/gru-module-crm-rest.git</url>
       <tag>HEAD</tag>
   </scm>
     
