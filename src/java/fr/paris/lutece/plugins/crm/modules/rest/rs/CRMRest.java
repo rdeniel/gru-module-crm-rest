@@ -124,7 +124,7 @@ public class CRMRest
      */
     @POST
     @Path( CRMRestConstants.PATH_CREATE_DEMAND_BY_USER_GUID )
-    @Produces( MediaType.TEXT_HTML )
+    @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     public String doCreateDemandByUserGuid( 
         @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
@@ -177,7 +177,7 @@ public class CRMRest
      */
     @POST
     @Path( CRMRestConstants.PATH_CREATE_DEMAND_BY_ID_CRM_USER )
-    @Produces( MediaType.TEXT_HTML )
+    @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     public String doCreateDemandByIdCRMUser( 
         @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
@@ -252,7 +252,7 @@ public class CRMRest
      */
     @POST
     @Path( CRMRestConstants.PATH_UPDATE_DEMAND )
-    @Produces( MediaType.TEXT_HTML )
+    @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     public String doUpdateDemand( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND )
     String strIdDemand, @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM )
@@ -310,7 +310,7 @@ public class CRMRest
      */
     @POST
     @Path( CRMRestConstants.PATH_DELETE_DEMAND )
-    @Produces( MediaType.TEXT_HTML )
+    @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     public String doDeleteDemand( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND )
     String strIdDemand )

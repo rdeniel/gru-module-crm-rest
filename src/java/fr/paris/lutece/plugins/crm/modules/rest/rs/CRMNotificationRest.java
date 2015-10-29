@@ -70,7 +70,7 @@ public class CRMNotificationRest
     */
     @POST
     @Path( CRMRestConstants.PATH_DEMAND )
-    @Produces( MediaType.TEXT_HTML )
+    @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     public String doNotify( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND )
     String strIdDemand, @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT )
