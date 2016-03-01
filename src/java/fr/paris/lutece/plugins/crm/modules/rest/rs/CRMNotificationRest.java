@@ -48,6 +48,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -106,4 +107,67 @@ public class CRMNotificationRest
 
         return strIdDemand;
     }
+    
+    /**
+     * notify a demand using Remote id and id demand Type
+     * 
+     * @param nVersion the API version
+     * @param strRemoteId the Remote Id
+     * @param strIdDemandType the demand type id
+     * @param strNotificationObject the notification object
+     * @param strNotificationMessage the notification message
+     * @param strNotificationSender the sender
+     * @return the id demand
+     */
+     @POST
+     @Path( CRMRestConstants.PATH_NOTIFY_DEMAND_V2)
+     @Produces( MediaType.TEXT_PLAIN )
+     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+     public String doNotifyV2(  @PathParam( CRMRestConstants.API_VERSION )
+     Integer nVersion,@FormParam( CRMRestConstants.PARAMETER_REMOTE_ID )
+     String strRemoteId,@FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
+     String strIdDemandType , @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT )
+     String strNotificationObject,
+         @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_MESSAGE )
+     String strNotificationMessage,
+         @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER )
+     String strNotificationSender )
+     {
+        
+    	 
+    	 if(nVersion==CRMRestConstants.VERSION_2)
+     	{
+    	 
+    	 
+    	 if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNumeric( strIdDemandType ) &&
+                 StringUtils.isNotBlank( strNotificationObject ) )
+         {
+             String strObject = StringUtil.convertString( strNotificationObject );
+             String strMessage = StringUtil.convertString( strNotificationMessage );
+             String strSender = StringUtil.convertString( strNotificationSender );
+
+             int nIdDemandType = Integer.parseInt( strIdDemandType );
+             Demand demand = DemandService.getService(  ).findByRemoteKey(strRemoteId, nIdDemandType);
+
+             if ( demand != null )
+             {
+                 CRMService.getService(  ).notify( demand.getIdDemand(), strObject, strMessage, strSender );
+             }
+             else
+             {
+                 AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+             }
+         }
+         else
+         {
+             AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
+         }
+     	}
+    	 else
+         {
+             AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
+         }
+
+         return strRemoteId;
+     }
 }

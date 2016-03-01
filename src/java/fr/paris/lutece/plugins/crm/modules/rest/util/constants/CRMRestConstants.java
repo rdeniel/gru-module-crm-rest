@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.crm.modules.rest.util.constants;
 
 
+
 /**
  *
  * CRMRestConstants
@@ -48,6 +49,8 @@ public final class CRMRestConstants
     public static final String INVALID_ID = "-1";
     public static final String MEDIA_TYPE_JSON = "application/json";
     public static final String MEDIA_TYPE_XML = "application/xml";
+    public static final String API_VERSION = "version";
+    public static final int VERSION_2 = 2;
     // PATHS
     public static final String PATH_WADL = "wadl";
     public static final String PATH_USER = "/user/";
@@ -63,6 +66,11 @@ public final class CRMRestConstants
     public static final String PATH_VIEW_DEMAND = PATH_DEMAND + "/{id_demand}";
     public static final String PATH_GET_USER_GUID_FROM_ID_CRM_USER = PATH_ID_CRM_USER + "/user_guid";
     public static final String PATH_GET_USER_GUID_FROM_ID_DEMAND = PATH_DEMAND + "/{id_demand}/user_guid";
+    public static final String PATH_CREATE_DEMAND_BY_USER_GUID_V2 =  "/{" + API_VERSION + "}/"+ PATH_CREATE_DEMAND_BY_USER_GUID;
+    public static final String PATH_UPDATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/"+PATH_UPDATE_DEMAND;
+    public static final String PATH_DELETE_DEMAND_V2 = "/{" + API_VERSION + "}/"+PATH_DELETE_DEMAND;
+    public static final String PATH_NOTIFY_DEMAND_V2 = "/{" + API_VERSION + "}/"+PATH_DEMAND;
+    
 
     // TAGS
     public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
@@ -87,6 +95,8 @@ public final class CRMRestConstants
     public static final String PARAMETER_NOTIFICATION_MESSAGE = "notification_message";
     public static final String PARAMETER_NOTIFICATION_SENDER = "notification_sender";
     public static final String PARAMETER_ID_DEMAND = "id_demand";
+    public static final String PARAMETER_REMOTE_ID = "remote_id";
+    
     public static final String PARAMETER_ID_DEMAND_TYPE = "id_demand_type";
     public static final String PARAMETER_DEMAND_DATA = "demand_data";
     public static final String PARAMETER_STATUS_TEXT = "status_text";
@@ -103,6 +113,7 @@ public final class CRMRestConstants
     // MESSAGES
     public static final String MESSAGE_CRM_REST = "CRM Rest - ";
     public static final String MESSAGE_INVALID_USER = "Invalid User.";
+    public static final String MESSAGE_INVALID_API_VERSION = "Invalid API Version";
     public static final String MESSAGE_MANDATORY_FIELDS = "Every mandatory fields are not filled.";
     public static final String MESSAGE_INVALID_DEMAND = "Invalid ID demand.";
     public static final String MESSAGE_INVALID_DEMAND_TYPE = "Invalid ID demand type.";
