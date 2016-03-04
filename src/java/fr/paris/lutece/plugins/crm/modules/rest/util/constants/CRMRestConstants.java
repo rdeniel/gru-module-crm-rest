@@ -70,6 +70,7 @@ public final class CRMRestConstants
     public static final String PATH_UPDATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/"+PATH_UPDATE_DEMAND;
     public static final String PATH_DELETE_DEMAND_V2 = "/{" + API_VERSION + "}/"+PATH_DELETE_DEMAND;
     public static final String PATH_NOTIFY_DEMAND_V2 = "/{" + API_VERSION + "}/"+PATH_DEMAND;
+    public static final String PATH_VIEW_DEMAND_V2 =  "/{" + API_VERSION + "}/"+ PATH_DEMAND+ "/{id_demand_type}/{remote_id}";
     
 
     // TAGS

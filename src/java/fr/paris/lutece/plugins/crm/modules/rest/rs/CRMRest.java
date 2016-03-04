@@ -590,6 +590,27 @@ public class CRMRest
        return getDemandXML(strIdDemand);
     }
     
+    /**
+     * Get the demand in XML or demand JSON depending the value of strMediaType
+     * @param nVersion the API version
+     * @param strRemoteId the Remote Id
+     * @param strIdDemandType the demand type id
+     * @return the demand
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_VIEW_DEMAND_V2 )
+    public String getDemandV2( @PathParam( CRMRestConstants.API_VERSION )
+    Integer nVersion,@PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )String strIdDemandType ,@PathParam( CRMRestConstants.PARAMETER_REMOTE_ID )
+    String strRemoteId, @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE) String strMediaType )
+    {
+      if ( StringUtils.isNotBlank( strMediaType ) && strMediaType.equals(CRMRestConstants.MEDIA_TYPE_JSON) )
+        {
+        	return getDemandJsonV2(nVersion, strIdDemandType, strRemoteId);
+        	
+        }
+       return getDemandXMLV2(nVersion, strIdDemandType, strRemoteId);
+    }
+    
     
 
     /**
@@ -609,31 +630,7 @@ public class CRMRest
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
             Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
-
-            if ( demand != null )
-            {
-                // sbXML.append( XmlUtil.getXmlHeader(  ) );
-                sbXML.append( CRMRestConstants.XML_HEADER );
-                XmlUtil.beginElement( sbXML, CRMRestConstants.TAG_DEMAND );
-
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand(  ) );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText(  ) );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_DATA, demand.getData(  ) );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser(  ) );
-
-                String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_DATE_MODIFICATION, strDateModification );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications(  ) );
-
-                XmlUtil.endElement( sbXML, CRMRestConstants.TAG_DEMAND );
-            }
-            else
-            {
-                AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND );
-                sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND, 3 ) );
-            }
+            sbXML.append(getDemandXML(demand));
         }
         else
         {
@@ -642,6 +639,46 @@ public class CRMRest
         }
 
         return sbXML.toString(  );
+    }
+    
+   
+    
+    /**
+     * Get the XML of the demand
+     * @param strIdDemand the id demand
+     * @return the XML of the demand
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_VIEW_DEMAND_V2 )
+    @Produces( MediaType.APPLICATION_XML )
+    public String getDemandXMLV2( @PathParam( CRMRestConstants.API_VERSION )
+    Integer nVersion,@PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )String strIdDemandType ,@PathParam( CRMRestConstants.PARAMETER_REMOTE_ID )
+    String strRemoteId)
+    {
+    	 StringBuffer sbXML = new StringBuffer(  );
+    	 
+    	 if(nVersion==CRMRestConstants.VERSION_2)
+    	{
+	        if ( StringUtils.isNotBlank( strRemoteId )&& StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) )
+	        {
+	            int nIdDemandType = Integer.parseInt( strIdDemandType );
+	            Demand demand = DemandService.getService(  ).findByRemoteKey(strRemoteId, nIdDemandType);
+	            sbXML.append(getDemandXML(demand));
+	            
+	        }
+	        else
+	        {
+	            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
+	            sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_INVALID_DEMAND, 3 ) );
+	        }
+	        
+    	}
+    	else
+        {
+            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
+            sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_INVALID_API_VERSION, 3 ) );
+        }
+    	   return sbXML.toString(  );
     }
 
     /**
@@ -661,30 +698,7 @@ public class CRMRest
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
             Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
-
-            if ( demand != null )
-            {
-                JSONObject json = new JSONObject(  );
-                json.accumulate( CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand(  ) );
-                json.accumulate( CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
-                json.accumulate( CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText(  ) );
-                json.accumulate( CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
-                json.accumulate( CRMRestConstants.TAG_DATA, demand.getData(  ) );
-                json.accumulate( CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser(  ) );
-
-                String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
-                json.accumulate( CRMRestConstants.TAG_DATE_MODIFICATION, strDateModification );
-                json.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications(  ) );
-
-                JSONObject jsonDemand = new JSONObject(  );
-                jsonDemand.accumulate( CRMRestConstants.TAG_DEMAND, json );
-                strJSON = jsonDemand.toString( 4 );
-            }
-            else
-            {
-                AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND );
-                strJSON = JSONUtil.formatError( CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND, 3 );
-            }
+            strJSON=getDemandJson(demand);
         }
         else
         {
@@ -693,6 +707,45 @@ public class CRMRest
         }
 
         return strJSON;
+    }
+    
+    /**
+     * Get the Json of the demand
+     * @param strIdDemand the id demand
+     * @return the XML of the demand
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_VIEW_DEMAND_V2 )
+    @Produces( MediaType.APPLICATION_JSON )
+    public String getDemandJsonV2( @PathParam( CRMRestConstants.API_VERSION )
+    Integer nVersion,@PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )String strIdDemandType ,@PathParam( CRMRestConstants.PARAMETER_REMOTE_ID )
+    String strRemoteId)
+    {
+    	  String strJSON = StringUtils.EMPTY;
+    	 
+    	 if(nVersion==CRMRestConstants.VERSION_2)
+    	{
+	        if ( StringUtils.isNotBlank( strRemoteId )&& StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) )
+	        {
+	            int nIdDemandType = Integer.parseInt( strIdDemandType );
+	            Demand demand = DemandService.getService(  ).findByRemoteKey(strRemoteId, nIdDemandType);
+	            strJSON=getDemandJson(demand);
+	            
+	        }
+	        else
+	        {
+	        	  AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+	              strJSON = JSONUtil.formatError( CRMRestConstants.MESSAGE_INVALID_DEMAND, 3 );
+	         }
+	        
+    	}
+    	else
+        {
+            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
+            strJSON = JSONUtil.formatError( CRMRestConstants.MESSAGE_INVALID_API_VERSION, 3 );
+       
+        }
+    	   return strJSON;
     }
 
     /**
@@ -731,4 +784,84 @@ public class CRMRest
 
         return strUserGuid;
     }
+    
+    
+    /**
+     * Get the XML of the demand
+     * @param demand the demand object
+     * @return the XML of the demand
+     */
+    
+    private  String getDemandXML(Demand demand)
+    {
+        StringBuffer sbXML = new StringBuffer(  );
+        
+        if ( demand != null )
+          {
+                // sbXML.append( XmlUtil.getXmlHeader(  ) );
+                sbXML.append( CRMRestConstants.XML_HEADER );
+                XmlUtil.beginElement( sbXML, CRMRestConstants.TAG_DEMAND );
+
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand(  ) );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText(  ) );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_DATA, demand.getData(  ) );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser(  ) );
+
+                String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_DATE_MODIFICATION, strDateModification );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications(  ) );
+
+                XmlUtil.endElement( sbXML, CRMRestConstants.TAG_DEMAND );
+            }
+            else
+            {
+                AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND );
+                sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND, 3 ) );
+            }
+        
+        	return sbXML.toString(  );
+    }
+    
+    
+    /**
+     * Get the Json of the demand
+     * @param demand the demand object
+     * @return the Json of the demand
+     */
+   
+    private  String getDemandJson(Demand demand )
+    {
+        String strJSON = StringUtils.EMPTY;
+
+       
+            if ( demand != null )
+            {
+                JSONObject json = new JSONObject(  );
+                json.accumulate( CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand(  ) );
+                json.accumulate( CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
+                json.accumulate( CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText(  ) );
+                json.accumulate( CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
+                json.accumulate( CRMRestConstants.TAG_DATA, demand.getData(  ) );
+                json.accumulate( CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser(  ) );
+
+                String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
+                json.accumulate( CRMRestConstants.TAG_DATE_MODIFICATION, strDateModification );
+                json.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications(  ) );
+
+                JSONObject jsonDemand = new JSONObject(  );
+                jsonDemand.accumulate( CRMRestConstants.TAG_DEMAND, json );
+                strJSON = jsonDemand.toString( 4 );
+            }
+            else
+            {
+                AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND );
+                strJSON = JSONUtil.formatError( CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND, 3 );
+            }
+        
+
+        return strJSON;
+    }
+
 }
