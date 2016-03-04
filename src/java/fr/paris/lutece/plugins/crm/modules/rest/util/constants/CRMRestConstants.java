@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.crm.modules.rest.util.constants;
 
 
-
 /**
  *
  * CRMRestConstants
@@ -51,6 +50,7 @@ public final class CRMRestConstants
     public static final String MEDIA_TYPE_XML = "application/xml";
     public static final String API_VERSION = "version";
     public static final int VERSION_2 = 2;
+
     // PATHS
     public static final String PATH_WADL = "wadl";
     public static final String PATH_USER = "/user/";
@@ -66,12 +66,13 @@ public final class CRMRestConstants
     public static final String PATH_VIEW_DEMAND = PATH_DEMAND + "/{id_demand}";
     public static final String PATH_GET_USER_GUID_FROM_ID_CRM_USER = PATH_ID_CRM_USER + "/user_guid";
     public static final String PATH_GET_USER_GUID_FROM_ID_DEMAND = PATH_DEMAND + "/{id_demand}/user_guid";
-    public static final String PATH_CREATE_DEMAND_BY_USER_GUID_V2 =  "/{" + API_VERSION + "}/"+ PATH_CREATE_DEMAND_BY_USER_GUID;
-    public static final String PATH_UPDATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/"+PATH_UPDATE_DEMAND;
-    public static final String PATH_DELETE_DEMAND_V2 = "/{" + API_VERSION + "}/"+PATH_DELETE_DEMAND;
-    public static final String PATH_NOTIFY_DEMAND_V2 = "/{" + API_VERSION + "}/"+PATH_DEMAND;
-    public static final String PATH_VIEW_DEMAND_V2 =  "/{" + API_VERSION + "}/"+ PATH_DEMAND+ "/{id_demand_type}/{remote_id}";
-    
+    public static final String PATH_CREATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/" +
+        PATH_CREATE_DEMAND_BY_USER_GUID;
+    public static final String PATH_UPDATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/" + PATH_UPDATE_DEMAND;
+    public static final String PATH_DELETE_DEMAND_V2 = "/{" + API_VERSION + "}/" + PATH_DELETE_DEMAND;
+    public static final String PATH_NOTIFY_DEMAND_V2 = "/{" + API_VERSION + "}/" + PATH_DEMAND;
+    public static final String PATH_VIEW_DEMAND_V2 = "/{" + API_VERSION + "}/" + PATH_DEMAND +
+        "/{id_demand_type}/{remote_id}";
 
     // TAGS
     public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
@@ -97,14 +98,12 @@ public final class CRMRestConstants
     public static final String PARAMETER_NOTIFICATION_SENDER = "notification_sender";
     public static final String PARAMETER_ID_DEMAND = "id_demand";
     public static final String PARAMETER_REMOTE_ID = "remote_id";
-    
     public static final String PARAMETER_ID_DEMAND_TYPE = "id_demand_type";
     public static final String PARAMETER_DEMAND_DATA = "demand_data";
     public static final String PARAMETER_STATUS_TEXT = "status_text";
     public static final String PARAMETER_ID_STATUS_CRM = "id_status_crm";
     public static final String PARAMETER_ID_CRM_USER = "id_crm_user";
     public static final String PARAMETER_MEDIA_TYPE = "media_type";
-
 
     // PROPERTIES
     public static final String PROPERTY_ENCODING_ENABLE = "crm-rest.encoding.enable";

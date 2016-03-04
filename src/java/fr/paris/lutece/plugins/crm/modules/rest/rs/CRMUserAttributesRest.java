@@ -68,34 +68,30 @@ import javax.ws.rs.core.MediaType;
 @Path( RestConstants.BASE_PATH + CRMPlugin.PLUGIN_NAME + CRMRestConstants.PATH_USER )
 public class CRMUserAttributesRest
 {
-    
-	
-	/**
-	 * Get the CRMUser attributes in XML or demand JSON depending the value of strMediaType
-	 * @param strMediaType the media type selected
-	 * @return the CRMUser attributes
-	 */
-   @GET
-   @Path( CRMRestConstants.PATH_CRM_USER_ATTRIBUTES )
-   public String getCRMUserAttributes( @PathParam( CRMRestConstants.PARAMETER_USER_GUID )
-    String strUserGuid,@QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE) String strMediaType )
-    {
-    	if ( StringUtils.isNotBlank( strMediaType ) && strMediaType.equals(CRMRestConstants.MEDIA_TYPE_JSON) )
-        {
-        	return getCRMUserAttributesJson(strUserGuid);
-        	
-        }
-       return getCRMUserAttributesXml(strUserGuid);
-        
-    }
-	
-	
-	
-	/**
-     * Get the CRMUser attributes in XML
-     * @param strUserGuid the user guid
+    /**
+     * Get the CRMUser attributes in XML or demand JSON depending the value of strMediaType
+     * @param strMediaType the media type selected
      * @return the CRMUser attributes
      */
+    @GET
+    @Path( CRMRestConstants.PATH_CRM_USER_ATTRIBUTES )
+    public String getCRMUserAttributes( @PathParam( CRMRestConstants.PARAMETER_USER_GUID )
+    String strUserGuid, @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE )
+    String strMediaType )
+    {
+        if ( StringUtils.isNotBlank( strMediaType ) && strMediaType.equals( CRMRestConstants.MEDIA_TYPE_JSON ) )
+        {
+            return getCRMUserAttributesJson( strUserGuid );
+        }
+
+        return getCRMUserAttributesXml( strUserGuid );
+    }
+
+    /**
+    * Get the CRMUser attributes in XML
+    * @param strUserGuid the user guid
+    * @return the CRMUser attributes
+    */
     @GET
     @Path( CRMRestConstants.PATH_CRM_USER_ATTRIBUTES )
     @Produces( MediaType.APPLICATION_XML )
