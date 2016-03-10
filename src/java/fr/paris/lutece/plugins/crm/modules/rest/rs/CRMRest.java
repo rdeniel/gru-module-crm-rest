@@ -196,7 +196,7 @@ public class CRMRest
 
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
-            if ( StringUtils.isNotBlank( strUserGuid ) )
+            if ( StringUtils.isNotBlank( strUserGuid 	) )
             {
                 CRMUser crmUser = CRMUserService.getService(  ).findByUserGuid( strUserGuid );
 
@@ -426,6 +426,8 @@ public class CRMRest
     String strData, @Context
     HttpServletRequest request )
     {
+    	
+    	String strIdDemand = CRMRestConstants.INVALID_ID;
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
             if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) &&
@@ -437,6 +439,7 @@ public class CRMRest
                 if ( demand != null )
                 {
                     int nIdStatusCRM = CRMRestConstants.INVALID_ID_INT;
+                    strIdDemand=Integer.toString(demand.getIdDemand());
                     DemandStatusCRM statusCRM = null;
 
                     if ( StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) )
@@ -475,7 +478,7 @@ public class CRMRest
             AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
         }
 
-        return strRemoteId;
+        return strIdDemand;
     }
 
     /**
@@ -530,6 +533,8 @@ public class CRMRest
     String strRemoteId, @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
     String strIdDemandType )
     {
+    	
+    	String strIdDemand = CRMRestConstants.INVALID_ID;
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
             if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) &&
@@ -540,6 +545,7 @@ public class CRMRest
 
                 if ( demand != null )
                 {
+                	strIdDemand=Integer.toString(demand.getIdDemand());
                     CRMService.getService(  ).deleteDemand( demand.getIdDemand(  ) );
                 }
                 else
@@ -557,7 +563,7 @@ public class CRMRest
             AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
         }
 
-        return strRemoteId;
+        return strIdDemand;
     }
 
     /**

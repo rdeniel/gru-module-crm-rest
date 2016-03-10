@@ -133,6 +133,8 @@ public class CRMNotificationRest
         @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER )
     String strNotificationSender )
     {
+    	
+    	String strIdDemand = CRMRestConstants.INVALID_ID;
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
             if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNumeric( strIdDemandType ) &&
@@ -147,6 +149,7 @@ public class CRMNotificationRest
 
                 if ( demand != null )
                 {
+                	strIdDemand=Integer.toString(demand.getIdDemand());
                     CRMService.getService(  ).notify( demand.getIdDemand(  ), strObject, strMessage, strSender );
                 }
                 else
@@ -164,6 +167,6 @@ public class CRMNotificationRest
             AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
         }
 
-        return strRemoteId;
+        return strIdDemand;
     }
 }
