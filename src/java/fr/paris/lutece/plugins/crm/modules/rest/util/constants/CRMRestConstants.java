@@ -56,6 +56,7 @@ public final class CRMRestConstants
     public static final String PATH_USER = "/user/";
     public static final String PATH_NOTIFY = "/notify/";
     public static final String PATH_DEMAND = "demand";
+    public static final String PATH_USER_NOTIFICATIONS = "userNotification";
     public static final String PATH_CRM_USER_ATTRIBUTES = "{user_guid}";
     public static final String PATH_CRM_USER_ATTRIBUTE = "{user_guid}/{attribute}";
     public static final String PATH_ID_CRM_USER = "{id_crm_user}";
@@ -89,7 +90,8 @@ public final class CRMRestConstants
     public static final String TAG_USER_GUID = "user-guid";
     public static final String TAG_DATE_MODIFICATION = "date-modification";
     public static final String TAG_NB_NOTIFICATIONS = "nb-notifications";
-
+    public static final String TAG_NB_NOTIFICATIONS_UNREAD = "nb-notifications-unread";
+    public static final String TAG_NOTIFICATION = "notification";
     // PARAMETERS
     public static final String PARAMETER_USER_GUID = "user_guid";
     public static final String PARAMETER_ATTRIBUTE = "attribute";
@@ -98,7 +100,9 @@ public final class CRMRestConstants
     public static final String PARAMETER_NOTIFICATION_SENDER = "notification_sender";
     public static final String PARAMETER_ID_DEMAND = "id_demand";
     public static final String PARAMETER_REMOTE_ID = "remote_id";
+    public static final String TAG_DEMNAD_TYPE = "demand_type";
     public static final String PARAMETER_ID_DEMAND_TYPE = "id_demand_type";
+    public static final String PARAMETER_LABEL_DEMAND_TYPE = "label_demand_type";
     public static final String PARAMETER_DEMAND_DATA = "demand_data";
     public static final String PARAMETER_STATUS_TEXT = "status_text";
     public static final String PARAMETER_ID_STATUS_CRM = "id_status_crm";

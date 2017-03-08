@@ -33,23 +33,40 @@
  */
 package fr.paris.lutece.plugins.crm.modules.rest.rs;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
+import fr.paris.lutece.plugins.crm.business.demand.DemandFilter;
+import fr.paris.lutece.plugins.crm.business.demand.DemandType;
+import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.crm.modules.rest.util.StringUtil;
 import fr.paris.lutece.plugins.crm.modules.rest.util.constants.CRMRestConstants;
 import fr.paris.lutece.plugins.crm.service.CRMPlugin;
 import fr.paris.lutece.plugins.crm.service.CRMService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandService;
+import fr.paris.lutece.plugins.crm.service.demand.DemandTypeService;
+import fr.paris.lutece.plugins.crm.service.user.CRMUserService;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
+import fr.paris.lutece.plugins.rest.util.json.JSONUtil;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.date.DateUtil;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 
@@ -168,5 +185,82 @@ public class CRMNotificationRest
         }
 
         return strIdDemand;
+    }
+    
+    /**
+     * Get the Json of the number notifications not read by Demand Type
+     * @param request
+     * @return the JSON of the number notifications not read by Demand Type
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_USER_NOTIFICATIONS )
+    @Produces( MediaType.APPLICATION_JSON )
+    public String getNumberNotificationsJson( @Context HttpServletRequest request )
+    {
+        String strJSON = StringUtils.EMPTY;
+        DemandFilter filter= new DemandFilter();
+        LuteceUser user = SecurityService.getInstance().getRegisteredUser(request);
+        
+        if( user != null ){
+        	
+	       CRMUserService crmUserService = CRMUserService.getService(  );
+	       CRMUser crmUser = crmUserService.findByUserGuid( user.getName() );
+	        
+	        if( crmUser != null ){
+	    
+		        filter.setIdCRMUser(crmUser.getIdCRMUser());
+		        List<Demand> listDemand= DemandService.getService().findByFilter(filter);
+		        strJSON= getNumberNotifications( listDemand );
+	        
+	        }else{
+	        	
+	        	return StringUtils.EMPTY;
+	        }
+        }
+
+        return strJSON;
+    }
+    
+    /**
+     * Get the Json of the number notifications not read 
+     * @param listDemand the list demand object
+     * @return the Json of the notification
+     */
+    private String getNumberNotifications( List<Demand> listDemand )
+    {
+        String strJSON = StringUtils.EMPTY;
+        JSONObject json = new JSONObject(  );
+        if(listDemand == null || listDemand.isEmpty( )){
+        	
+        	return strJSON;
+        }
+        
+        Map<Integer,Integer> map=new HashMap<Integer,Integer>() ;
+        for(DemandType demandType:DemandTypeService.getService().findAll()){
+        	JSONObject jsonTypedemande = new JSONObject(  );
+        	for(Demand demand:listDemand){
+        		
+        		if(demand.getIdDemandType() == demandType.getIdDemandType()){
+        			
+        			if(map.containsKey(demandType.getLabel( ))){
+        				
+        				map.put(demandType.getIdDemandType( ), map.get(demandType.getIdDemandType( ))+demand.getNumberUnreadNotifications());
+        			
+        			}else{
+        				
+        				map.put(demandType.getIdDemandType( ), demand.getNumberUnreadNotifications());
+        			}
+        		}
+        	}
+        	jsonTypedemande.accumulate(CRMRestConstants.TAG_NB_NOTIFICATIONS_UNREAD,map.get(demandType.getIdDemandType( )));
+        	jsonTypedemande.accumulate(CRMRestConstants.PARAMETER_LABEL_DEMAND_TYPE, demandType.getLabel( ));
+        	json.accumulate( String.valueOf(demandType.getIdDemandType( )), jsonTypedemande);
+        	JSONObject jsonDemand = new JSONObject(  );
+            jsonDemand.accumulate( CRMRestConstants.TAG_DEMNAD_TYPE, json );
+            strJSON = jsonDemand.toString( 4 );
+        }
+        
+
+        return strJSON;
     }
 }
