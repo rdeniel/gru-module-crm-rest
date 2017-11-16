@@ -236,20 +236,15 @@ public class CRMNotificationRest
         }
         
         Map<Integer,Integer> map=new HashMap<Integer,Integer>() ;
+        int nBNotifTotal=0;
         for(DemandType demandType:DemandTypeService.getService().findAll()){
-        	JSONObject jsonTypedemande = new JSONObject(  );
+            
+            map.put(demandType.getIdDemandType( ),  0);
+            JSONObject jsonTypedemande = new JSONObject(  );
         	for(Demand demand:listDemand){
-        		
         		if(demand.getIdDemandType() == demandType.getIdDemandType()){
-        			
-        			if(map.containsKey(demandType.getLabel( ))){
-        				
-        				map.put(demandType.getIdDemandType( ), map.get(demandType.getIdDemandType( ))+demand.getNumberUnreadNotifications());
-        			
-        			}else{
-        				
-        				map.put(demandType.getIdDemandType( ), demand.getNumberUnreadNotifications());
-        			}
+        			map.put(demandType.getIdDemandType( ), map.get(demandType.getIdDemandType( ))+demand.getNumberUnreadNotifications());
+        			nBNotifTotal=nBNotifTotal+demand.getNumberUnreadNotifications( );
         		}
         	}
         	jsonTypedemande.accumulate(CRMRestConstants.TAG_NB_NOTIFICATIONS_UNREAD,map.get(demandType.getIdDemandType( )));
@@ -257,7 +252,8 @@ public class CRMNotificationRest
         	json.accumulate( String.valueOf(demandType.getIdDemandType( )), jsonTypedemande);
         	JSONObject jsonDemand = new JSONObject(  );
             jsonDemand.accumulate( CRMRestConstants.TAG_DEMNAD_TYPE, json );
-            strJSON = jsonDemand.toString( 4 );
+            jsonDemand.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS_UNREAD, nBNotifTotal );
+             strJSON = jsonDemand.toString( 4 );
         }
         
 
