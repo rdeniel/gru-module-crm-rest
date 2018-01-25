@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.crm.modules.rest.util.constants;
 
-
 /**
  *
  * CRMRestConstants
@@ -50,13 +49,15 @@ public final class CRMRestConstants
     public static final String MEDIA_TYPE_XML = "application/xml";
     public static final String API_VERSION = "version";
     public static final int VERSION_2 = 2;
-
+    public static final String USER_GUID = "user_guid";
     // PATHS
     public static final String PATH_WADL = "wadl";
     public static final String PATH_USER = "/user/";
     public static final String PATH_NOTIFY = "/notify/";
     public static final String PATH_DEMAND = "demand";
     public static final String PATH_USER_NOTIFICATIONS = "userNotification";
+    public static final String PATH_USER_NOTIFICATIONS_BY_GUID = "userNotificationbyguid"+"/{" + CRMRestConstants.USER_GUID+ "}";
+    
     public static final String PATH_CRM_USER_ATTRIBUTES = "{user_guid}";
     public static final String PATH_CRM_USER_ATTRIBUTE = "{user_guid}/{attribute}";
     public static final String PATH_ID_CRM_USER = "{id_crm_user}";

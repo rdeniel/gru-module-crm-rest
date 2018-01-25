@@ -37,6 +37,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandFilter;
 import fr.paris.lutece.plugins.crm.business.demand.DemandType;
@@ -49,25 +62,10 @@ import fr.paris.lutece.plugins.crm.service.demand.DemandService;
 import fr.paris.lutece.plugins.crm.service.demand.DemandTypeService;
 import fr.paris.lutece.plugins.crm.service.user.CRMUserService;
 import fr.paris.lutece.plugins.rest.service.RestConstants;
-import fr.paris.lutece.plugins.rest.util.json.JSONUtil;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.util.date.DateUtil;
 import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 
 /**
@@ -216,6 +214,44 @@ public class CRMNotificationRest
 	        	
 	        	return StringUtils.EMPTY;
 	        }
+        }
+
+        return strJSON;
+    }
+    
+    
+    /**
+     * Get the Json of the number notifications not read by Demand Type by user Guid
+     * The Api must be protected by signed request
+     * @param request http servlet request
+     * @param strGuid the user Guid
+     * @return the JSON of the number notifications not read by Demand Type
+     */
+    @GET
+    @Path( CRMRestConstants.PATH_USER_NOTIFICATIONS_BY_GUID )
+    @Produces( MediaType.APPLICATION_JSON )
+    public String getNumberNotificationsByGuidJson( @Context HttpServletRequest request ,@PathParam( CRMRestConstants.USER_GUID )
+    String strGuid)
+    {
+        String strJSON = StringUtils.EMPTY;
+        DemandFilter filter= new DemandFilter();
+    
+        
+        if( !StringUtils.isEmpty(strGuid)){
+            
+           CRMUserService crmUserService = CRMUserService.getService(  );
+           CRMUser crmUser = crmUserService.findByUserGuid( strGuid);
+            
+            if( crmUser != null ){
+        
+                filter.setIdCRMUser(crmUser.getIdCRMUser());
+                List<Demand> listDemand= DemandService.getService().findByFilter(filter);
+                strJSON= getNumberNotifications( listDemand );
+            
+            }else{
+                
+                return StringUtils.EMPTY;
+            }
         }
 
         return strJSON;
