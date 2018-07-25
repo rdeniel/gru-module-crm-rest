@@ -39,7 +39,6 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import org.apache.commons.lang.StringUtils;
 
-
 /**
  *
  * StringUtil
@@ -50,16 +49,16 @@ public final class StringUtil
     /**
      * Private constructor
      */
-    private StringUtil(  )
+    private StringUtil( )
     {
     }
 
     /**
-     * Convert a string from the encoding defined in <code>crm-rest.encoding.from</code>
-     * to the encoding defined in <code>crm-rest.encoding.to</code>.
-     * <br />
+     * Convert a string from the encoding defined in <code>crm-rest.encoding.from</code> to the encoding defined in <code>crm-rest.encoding.to</code>. <br />
      * If there is an error, then it will return the String given in the parameter.
-     * @param strToConvert the String to convert
+     * 
+     * @param strToConvert
+     *            the String to convert
      * @return the convert String if there is no error, the String in the parameter otherwise
      */
     public static String convertString( String strToConvert )
@@ -79,9 +78,9 @@ public final class StringUtil
             {
                 strConverted = new String( strToConvert.getBytes( strEncodingFrom ), strEncodingTo );
             }
-            catch ( Exception e )
+            catch( Exception e )
             {
-                AppLogService.error( e.getMessage(  ), e );
+                AppLogService.error( e.getMessage( ), e );
             }
         }
 

@@ -50,12 +50,14 @@ import javax.ws.rs.core.Response;
 /**
  * CRM Demand Type Rest Service
  */
-@Path( RestConstants.BASE_PATH + CRMPlugin.PLUGIN_NAME + CRMRestConstants.PATH_DEMAND_TYPES  )
+@Path( RestConstants.BASE_PATH + CRMPlugin.PLUGIN_NAME + CRMRestConstants.PATH_DEMAND_TYPES )
 public class CRMDemandTypeRest
 {
-    private ObjectMapper _objectMapper = new ObjectMapper();
+    private ObjectMapper _objectMapper = new ObjectMapper( );
+
     /**
      * Get all the demand types
+     * 
      * @return a JSON of the list of the demand types
      */
     @POST
@@ -63,17 +65,17 @@ public class CRMDemandTypeRest
     @Produces( MediaType.APPLICATION_JSON )
     public Response getDemandTypes( )
     {
-        
-    	List<DemandType> listDemandTypes = DemandTypeHome.findAll( );
+
+        List<DemandType> listDemandTypes = DemandTypeHome.findAll( );
         try
         {
             String strResult = _objectMapper.writeValueAsString( listDemandTypes );
-            return Response.ok( strResult  ).build();
+            return Response.ok( strResult ).build( );
         }
-        catch ( JsonProcessingException e )
+        catch( JsonProcessingException e )
         {
-            return Response.serverError().build();
+            return Response.serverError( ).build( );
         }
-        
+
     }
 }

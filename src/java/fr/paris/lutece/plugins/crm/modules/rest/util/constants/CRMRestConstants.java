@@ -56,8 +56,8 @@ public final class CRMRestConstants
     public static final String PATH_NOTIFY = "/notify/";
     public static final String PATH_DEMAND = "demand";
     public static final String PATH_USER_NOTIFICATIONS = "userNotification";
-    public static final String PATH_USER_NOTIFICATIONS_BY_GUID = "userNotificationbyguid"+"/{" + CRMRestConstants.USER_GUID+ "}";
-    
+    public static final String PATH_USER_NOTIFICATIONS_BY_GUID = "userNotificationbyguid" + "/{" + CRMRestConstants.USER_GUID + "}";
+
     public static final String PATH_CRM_USER_ATTRIBUTES = "{user_guid}";
     public static final String PATH_CRM_USER_ATTRIBUTE = "{user_guid}/{attribute}";
     public static final String PATH_ID_CRM_USER = "{id_crm_user}";
@@ -68,16 +68,14 @@ public final class CRMRestConstants
     public static final String PATH_VIEW_DEMAND = PATH_DEMAND + "/{id_demand}";
     public static final String PATH_GET_USER_GUID_FROM_ID_CRM_USER = PATH_ID_CRM_USER + "/user_guid";
     public static final String PATH_GET_USER_GUID_FROM_ID_DEMAND = PATH_DEMAND + "/{id_demand}/user_guid";
-    public static final String PATH_CREATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/" +
-        PATH_CREATE_DEMAND_BY_USER_GUID;
+    public static final String PATH_CREATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/" + PATH_CREATE_DEMAND_BY_USER_GUID;
     public static final String PATH_UPDATE_DEMAND_BY_USER_GUID_V2 = "/{" + API_VERSION + "}/" + PATH_UPDATE_DEMAND;
     public static final String PATH_DELETE_DEMAND_V2 = "/{" + API_VERSION + "}/" + PATH_DELETE_DEMAND;
     public static final String PATH_NOTIFY_DEMAND_V2 = "/{" + API_VERSION + "}/" + PATH_DEMAND;
     public static final String PATH_DEMAND_TYPES = "/demand_types";
     public static final String PATH_GET_DEMAND = "get/";
     public static final String PATH_GET_ALL_DEMANDS = "all/";
-    public static final String PATH_VIEW_DEMAND_V2 = "/{" + API_VERSION + "}/" + PATH_DEMAND +
-        "/{id_demand_type}/{remote_id}";
+    public static final String PATH_VIEW_DEMAND_V2 = "/{" + API_VERSION + "}/" + PATH_DEMAND + "/{id_demand_type}/{remote_id}";
 
     // TAGS
     public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
@@ -137,7 +135,7 @@ public final class CRMRestConstants
     /**
      * Private constructor
      */
-    private CRMRestConstants(  )
+    private CRMRestConstants( )
     {
     }
 }

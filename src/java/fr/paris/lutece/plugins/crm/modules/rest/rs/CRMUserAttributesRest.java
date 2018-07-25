@@ -59,7 +59,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-
 /**
  *
  * CRMUserAttributeRest
@@ -70,14 +69,15 @@ public class CRMUserAttributesRest
 {
     /**
      * Get the CRMUser attributes in XML or demand JSON depending the value of strMediaType
-     * @param strMediaType the media type selected
+     * 
+     * @param strMediaType
+     *            the media type selected
      * @return the CRMUser attributes
      */
     @GET
     @Path( CRMRestConstants.PATH_CRM_USER_ATTRIBUTES )
-    public String getCRMUserAttributes( @PathParam( CRMRestConstants.PARAMETER_USER_GUID )
-    String strUserGuid, @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE )
-    String strMediaType )
+    public String getCRMUserAttributes( @PathParam( CRMRestConstants.PARAMETER_USER_GUID ) String strUserGuid,
+            @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE ) String strMediaType )
     {
         if ( StringUtils.isNotBlank( strMediaType ) && strMediaType.equals( CRMRestConstants.MEDIA_TYPE_JSON ) )
         {
@@ -88,31 +88,32 @@ public class CRMUserAttributesRest
     }
 
     /**
-    * Get the CRMUser attributes in XML
-    * @param strUserGuid the user guid
-    * @return the CRMUser attributes
-    */
+     * Get the CRMUser attributes in XML
+     * 
+     * @param strUserGuid
+     *            the user guid
+     * @return the CRMUser attributes
+     */
     @GET
     @Path( CRMRestConstants.PATH_CRM_USER_ATTRIBUTES )
     @Produces( MediaType.APPLICATION_XML )
-    public String getCRMUserAttributesXml( @PathParam( CRMRestConstants.PARAMETER_USER_GUID )
-    String strUserGuid )
+    public String getCRMUserAttributesXml( @PathParam( CRMRestConstants.PARAMETER_USER_GUID ) String strUserGuid )
     {
-        StringBuffer sbXML = new StringBuffer(  );
+        StringBuffer sbXML = new StringBuffer( );
 
         if ( StringUtils.isNotBlank( strUserGuid ) )
         {
-            // sbXML.append( XmlUtil.getXmlHeader(  ) );
+            // sbXML.append( XmlUtil.getXmlHeader( ) );
             sbXML.append( CRMRestConstants.XML_HEADER );
             XmlUtil.beginElement( sbXML, CRMRestConstants.TAG_USER_ATTRIBUTES );
 
-            Map<String, String> listAttributes = CRMUserAttributesService.getService(  ).getAttributes( strUserGuid );
+            Map<String, String> listAttributes = CRMUserAttributesService.getService( ).getAttributes( strUserGuid );
 
-            for ( Entry<String, String> attribute : listAttributes.entrySet(  ) )
+            for ( Entry<String, String> attribute : listAttributes.entrySet( ) )
             {
                 XmlUtil.beginElement( sbXML, CRMRestConstants.TAG_USER_ATTRIBUTE );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_ATTRIBUTE_KEY, attribute.getKey(  ) );
-                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_ATTRIBUTE_VALUE, attribute.getValue(  ) );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_ATTRIBUTE_KEY, attribute.getKey( ) );
+                XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_ATTRIBUTE_VALUE, attribute.getValue( ) );
                 XmlUtil.endElement( sbXML, CRMRestConstants.TAG_USER_ATTRIBUTE );
             }
 
@@ -124,34 +125,35 @@ public class CRMUserAttributesRest
             sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_INVALID_USER, 3 ) );
         }
 
-        return sbXML.toString(  );
+        return sbXML.toString( );
     }
 
     /**
      * Get the CRMUser attributes in JSON
-     * @param strUserGuid the user guid
+     * 
+     * @param strUserGuid
+     *            the user guid
      * @return the attributes
      */
     @GET
     @Path( CRMRestConstants.PATH_CRM_USER_ATTRIBUTES )
     @Produces( MediaType.APPLICATION_JSON )
-    public String getCRMUserAttributesJson( @PathParam( CRMRestConstants.PARAMETER_USER_GUID )
-    String strUserGuid )
+    public String getCRMUserAttributesJson( @PathParam( CRMRestConstants.PARAMETER_USER_GUID ) String strUserGuid )
     {
         String strJSON = StringUtils.EMPTY;
 
         if ( StringUtils.isNotBlank( strUserGuid ) )
         {
-            JSONObject jsonAttributes = new JSONObject(  );
-            JSONArray jsonArray = new JSONArray(  );
+            JSONObject jsonAttributes = new JSONObject( );
+            JSONArray jsonArray = new JSONArray( );
 
-            Map<String, String> listAttributes = CRMUserAttributesService.getService(  ).getAttributes( strUserGuid );
+            Map<String, String> listAttributes = CRMUserAttributesService.getService( ).getAttributes( strUserGuid );
 
-            for ( Entry<String, String> attribute : listAttributes.entrySet(  ) )
+            for ( Entry<String, String> attribute : listAttributes.entrySet( ) )
             {
-                JSONObject jsonAttribute = new JSONObject(  );
-                jsonAttribute.accumulate( CRMRestConstants.TAG_USER_ATTRIBUTE_KEY, attribute.getKey(  ) );
-                jsonAttribute.accumulate( CRMRestConstants.TAG_USER_ATTRIBUTE_VALUE, attribute.getValue(  ) );
+                JSONObject jsonAttribute = new JSONObject( );
+                jsonAttribute.accumulate( CRMRestConstants.TAG_USER_ATTRIBUTE_KEY, attribute.getKey( ) );
+                jsonAttribute.accumulate( CRMRestConstants.TAG_USER_ATTRIBUTE_VALUE, attribute.getValue( ) );
                 jsonArray.add( jsonAttribute );
             }
 
@@ -169,22 +171,24 @@ public class CRMUserAttributesRest
 
     /**
      * Get the CRMUser attribute value
-     * @param strUserGuid the user guid
-     * @param strAttribute the attribute
+     * 
+     * @param strUserGuid
+     *            the user guid
+     * @param strAttribute
+     *            the attribute
      * @return the attribute value
      */
     @GET
     @Path( CRMRestConstants.PATH_CRM_USER_ATTRIBUTE )
     @Produces( MediaType.TEXT_PLAIN )
-    public String getCRMUserAttribute( @PathParam( CRMRestConstants.PARAMETER_USER_GUID )
-    String strUserGuid, @PathParam( CRMRestConstants.PARAMETER_ATTRIBUTE )
-    String strAttribute )
+    public String getCRMUserAttribute( @PathParam( CRMRestConstants.PARAMETER_USER_GUID ) String strUserGuid,
+            @PathParam( CRMRestConstants.PARAMETER_ATTRIBUTE ) String strAttribute )
     {
         String strAttributeValue = StringUtils.EMPTY;
 
         if ( StringUtils.isNotBlank( strUserGuid ) )
         {
-            strAttributeValue = CRMUserAttributesService.getService(  ).getAttribute( strUserGuid, strAttribute );
+            strAttributeValue = CRMUserAttributesService.getService( ).getAttribute( strUserGuid, strAttribute );
         }
         else
         {
@@ -196,25 +200,26 @@ public class CRMUserAttributesRest
 
     /**
      * Get the user guid from a given id crm user
-     * @param strIdCRMUser the id crm user
+     * 
+     * @param strIdCRMUser
+     *            the id crm user
      * @return the user guid
      */
     @GET
     @Path( CRMRestConstants.PATH_GET_USER_GUID_FROM_ID_CRM_USER )
     @Produces( MediaType.TEXT_PLAIN )
-    public String getUserGuidFromIdCRMUser( @PathParam( CRMRestConstants.PARAMETER_ID_CRM_USER )
-    String strIdCRMUser )
+    public String getUserGuidFromIdCRMUser( @PathParam( CRMRestConstants.PARAMETER_ID_CRM_USER ) String strIdCRMUser )
     {
         String strUserGuid = StringUtils.EMPTY;
 
         if ( StringUtils.isNotBlank( strIdCRMUser ) && StringUtils.isNumeric( strIdCRMUser ) )
         {
             int nIdCRMUser = Integer.parseInt( strIdCRMUser );
-            CRMUser user = CRMUserService.getService(  ).findByPrimaryKey( nIdCRMUser );
+            CRMUser user = CRMUserService.getService( ).findByPrimaryKey( nIdCRMUser );
 
             if ( user != null )
             {
-                strUserGuid = user.getUserGuid(  );
+                strUserGuid = user.getUserGuid( );
             }
         }
         else

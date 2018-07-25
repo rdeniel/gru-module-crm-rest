@@ -75,7 +75,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-
 /**
  *
  * CRMRest
@@ -86,76 +85,81 @@ public class CRMRest
 {
     /**
      * Get the wadl.xml content
-     * @param request {@link HttpServletRequest}
+     * 
+     * @param request
+     *            {@link HttpServletRequest}
      * @return the content of wadl.xml
      */
     @GET
     @Path( CRMRestConstants.PATH_WADL )
     @Produces( MediaType.APPLICATION_XML )
-    public String getWADL( @Context
-    HttpServletRequest request )
+    public String getWADL( @Context HttpServletRequest request )
     {
         StringBuilder sbBase = new StringBuilder( AppPathService.getBaseUrl( request ) );
 
-        if ( sbBase.toString(  ).endsWith( CRMRestConstants.SLASH ) )
+        if ( sbBase.toString( ).endsWith( CRMRestConstants.SLASH ) )
         {
-            sbBase.deleteCharAt( sbBase.length(  ) - 1 );
+            sbBase.deleteCharAt( sbBase.length( ) - 1 );
         }
 
         sbBase.append( RestConstants.BASE_PATH + CRMPlugin.PLUGIN_NAME );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( CRMRestConstants.MARK_BASE_URL, sbBase.toString(  ) );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( CRMRestConstants.MARK_BASE_URL, sbBase.toString( ) );
 
-        HtmlTemplate t = AppTemplateService.getTemplate( CRMRestConstants.TEMPLATE_WADL, request.getLocale(  ), model );
+        HtmlTemplate t = AppTemplateService.getTemplate( CRMRestConstants.TEMPLATE_WADL, request.getLocale( ), model );
 
-        return t.getHtml(  );
+        return t.getHtml( );
     }
 
     /**
      * Create a new demand
-     * @param strIdDemandType the demand type id
-     * @param strUserGuid the user guid
-     * @param strIdStatusCRM the id status crm
-     * @param strStatusText the status text
-     * @param strData the data
-     * @param request {@link HttpServletRequest}
+     * 
+     * @param strIdDemandType
+     *            the demand type id
+     * @param strUserGuid
+     *            the user guid
+     * @param strIdStatusCRM
+     *            the id status crm
+     * @param strStatusText
+     *            the status text
+     * @param strData
+     *            the data
+     * @param request
+     *            {@link HttpServletRequest}
      * @return the id of the newly created demand
      */
     @POST
     @Path( CRMRestConstants.PATH_CREATE_DEMAND_BY_USER_GUID )
     @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doCreateDemandByUserGuid( 
-        @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType, @FormParam( CRMRestConstants.PARAMETER_USER_GUID )
-    String strUserGuid, @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM )
-    String strIdStatusCRM, @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT )
-    String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA )
-    String strData, @Context
-    HttpServletRequest request )
+    public String doCreateDemandByUserGuid( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+            @FormParam( CRMRestConstants.PARAMETER_USER_GUID ) String strUserGuid,
+            @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM ) String strIdStatusCRM,
+            @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT ) String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA ) String strData,
+            @Context HttpServletRequest request )
     {
         String strIdDemand = CRMRestConstants.INVALID_ID;
 
         if ( StringUtils.isNotBlank( strUserGuid ) )
         {
-            CRMUser crmUser = CRMUserService.getService(  ).findByUserGuid( strUserGuid );
+            CRMUser crmUser = CRMUserService.getService( ).findByUserGuid( strUserGuid );
 
             if ( crmUser == null )
             {
-                //if crm user does not exist create crm user
-                crmUser = new CRMUser(  );
+                // if crm user does not exist create crm user
+                crmUser = new CRMUser( );
                 crmUser.setUserGuid( strUserGuid );
                 crmUser.setMustBeUpdated( true );
-                crmUser.setIdCRMUser( CRMUserService.getService(  ).create( crmUser ) );
+                crmUser.setIdCRMUser( CRMUserService.getService( ).create( crmUser ) );
 
                 AppLogService.debug( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_USER );
             }
 
             String strConvertedStatusText = StringUtil.convertString( strStatusText );
             String strConvertedData = StringUtil.convertString( strData );
-            strIdDemand = doCreateDemandByIdCRMUser( strIdDemandType, Integer.toString( crmUser.getIdCRMUser(  ) ),
-                    strIdStatusCRM, strConvertedStatusText, strConvertedData, request );
+            strIdDemand = doCreateDemandByIdCRMUser( strIdDemandType, Integer.toString( crmUser.getIdCRMUser( ) ), strIdStatusCRM, strConvertedStatusText,
+                    strConvertedData, request );
         }
         else
         {
@@ -168,81 +172,81 @@ public class CRMRest
     /**
      * Create a new demand using Remote id and id demand Type
      *
-     * @param nVersion the API version
-     * @param strRemoteId the Remote Id
-     * @param strIdDemandType the demand type id
-     * @param strUserGuid the user guid
-     * @param strIdStatusCRM the id status crm
-     * @param strStatusText the status text
-     * @param strData the data
-     * @param request {@link HttpServletRequest}
+     * @param nVersion
+     *            the API version
+     * @param strRemoteId
+     *            the Remote Id
+     * @param strIdDemandType
+     *            the demand type id
+     * @param strUserGuid
+     *            the user guid
+     * @param strIdStatusCRM
+     *            the id status crm
+     * @param strStatusText
+     *            the status text
+     * @param strData
+     *            the data
+     * @param request
+     *            {@link HttpServletRequest}
      * @return the id of the newly created demand
      */
     @POST
     @Path( CRMRestConstants.PATH_CREATE_DEMAND_BY_USER_GUID_V2 )
     @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doCreateDemandByUserGuidV2( @PathParam( CRMRestConstants.API_VERSION )
-    Integer nVersion, @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID )
-    String strRemoteId, @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType, @FormParam( CRMRestConstants.PARAMETER_USER_GUID )
-    String strUserGuid, @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM )
-    String strIdStatusCRM, @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT )
-    String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA )
-    String strData, @Context
-    HttpServletRequest request )
+    public String doCreateDemandByUserGuidV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+            @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId,
+            @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+            @FormParam( CRMRestConstants.PARAMETER_USER_GUID ) String strUserGuid,
+            @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM ) String strIdStatusCRM,
+            @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT ) String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA ) String strData,
+            @Context HttpServletRequest request )
     {
         String strIdDemand = CRMRestConstants.INVALID_ID;
 
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
-            if ( StringUtils.isNotBlank( strUserGuid 	) )
+            if ( StringUtils.isNotBlank( strUserGuid ) )
             {
-                CRMUser crmUser = CRMUserService.getService(  ).findByUserGuid( strUserGuid );
+                CRMUser crmUser = CRMUserService.getService( ).findByUserGuid( strUserGuid );
 
                 if ( crmUser == null )
                 {
-                    //if crm user does not exist create crm user
-                    crmUser = new CRMUser(  );
+                    // if crm user does not exist create crm user
+                    crmUser = new CRMUser( );
                     crmUser.setUserGuid( strUserGuid );
                     crmUser.setMustBeUpdated( true );
-                    crmUser.setIdCRMUser( CRMUserService.getService(  ).create( crmUser ) );
+                    crmUser.setIdCRMUser( CRMUserService.getService( ).create( crmUser ) );
 
                     AppLogService.debug( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_USER );
                 }
 
-                if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) &&
-                        StringUtils.isNumeric( strIdDemandType ) && StringUtils.isNotBlank( strIdStatusCRM ) &&
-                        StringUtils.isNumeric( strIdStatusCRM ) )
+                if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType )
+                        && StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) )
                 {
                     int nIdDemandType = Integer.parseInt( strIdDemandType );
-                    DemandType demandType = DemandTypeService.getService(  ).findByPrimaryKey( nIdDemandType );
+                    DemandType demandType = DemandTypeService.getService( ).findByPrimaryKey( nIdDemandType );
 
                     if ( demandType != null )
                     {
                         int nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
-                        DemandStatusCRM statusCRM = DemandStatusCRMService.getService(  )
-                                                                          .getStatusCRM( nIdStatusCRM,
-                                request.getLocale(  ) );
+                        DemandStatusCRM statusCRM = DemandStatusCRMService.getService( ).getStatusCRM( nIdStatusCRM, request.getLocale( ) );
 
                         if ( statusCRM != null )
                         {
                             String strConvertedStatusText = StringUtil.convertString( strStatusText );
                             String strConvertedData = StringUtil.convertString( strData );
-                            strIdDemand = Integer.toString( CRMService.getService(  )
-                                                                      .registerDemand( strRemoteId, nIdDemandType,
-                                        crmUser.getIdCRMUser(  ), strConvertedData, strConvertedStatusText, nIdStatusCRM ) );
+                            strIdDemand = Integer.toString( CRMService.getService( ).registerDemand( strRemoteId, nIdDemandType, crmUser.getIdCRMUser( ),
+                                    strConvertedData, strConvertedStatusText, nIdStatusCRM ) );
                         }
                         else
                         {
-                            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST +
-                                CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
+                            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
                         }
                     }
                     else
                     {
-                        AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST +
-                            CRMRestConstants.MESSAGE_INVALID_DEMAND_TYPE );
+                        AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND_TYPE );
                     }
                 }
                 else
@@ -265,65 +269,64 @@ public class CRMRest
 
     /**
      * Create a new demand
-     * @param strIdDemandType the demand type id
-     * @param strIdCRMUser the ID CRM user
-     * @param strIdStatusCRM the id status crm
-     * @param strStatusText the status text
-     * @param strData the data
-     * @param request {@link HttpServletRequest}
+     * 
+     * @param strIdDemandType
+     *            the demand type id
+     * @param strIdCRMUser
+     *            the ID CRM user
+     * @param strIdStatusCRM
+     *            the id status crm
+     * @param strStatusText
+     *            the status text
+     * @param strData
+     *            the data
+     * @param request
+     *            {@link HttpServletRequest}
      * @return the id of the newly created demand
      */
     @POST
     @Path( CRMRestConstants.PATH_CREATE_DEMAND_BY_ID_CRM_USER )
     @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doCreateDemandByIdCRMUser( 
-        @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType, @FormParam( CRMRestConstants.PARAMETER_ID_CRM_USER )
-    String strIdCRMUser, @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM )
-    String strIdStatusCRM, @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT )
-    String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA )
-    String strData, @Context
-    HttpServletRequest request )
+    public String doCreateDemandByIdCRMUser( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+            @FormParam( CRMRestConstants.PARAMETER_ID_CRM_USER ) String strIdCRMUser,
+            @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM ) String strIdStatusCRM,
+            @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT ) String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA ) String strData,
+            @Context HttpServletRequest request )
     {
         String strIdDemand = CRMRestConstants.INVALID_ID;
 
-        if ( StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) &&
-                StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) &&
-                StringUtils.isNotBlank( strIdCRMUser ) && StringUtils.isNumeric( strIdCRMUser ) )
+        if ( StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) && StringUtils.isNotBlank( strIdStatusCRM )
+                && StringUtils.isNumeric( strIdStatusCRM ) && StringUtils.isNotBlank( strIdCRMUser ) && StringUtils.isNumeric( strIdCRMUser ) )
         {
             int nIdCRMUser = Integer.parseInt( strIdCRMUser );
-            CRMUser crmUser = CRMUserService.getService(  ).findByPrimaryKey( nIdCRMUser );
+            CRMUser crmUser = CRMUserService.getService( ).findByPrimaryKey( nIdCRMUser );
 
             if ( crmUser != null )
             {
                 int nIdDemandType = Integer.parseInt( strIdDemandType );
-                DemandType demandType = DemandTypeService.getService(  ).findByPrimaryKey( nIdDemandType );
+                DemandType demandType = DemandTypeService.getService( ).findByPrimaryKey( nIdDemandType );
 
                 if ( demandType != null )
                 {
                     int nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
-                    DemandStatusCRM statusCRM = DemandStatusCRMService.getService(  )
-                                                                      .getStatusCRM( nIdStatusCRM, request.getLocale(  ) );
+                    DemandStatusCRM statusCRM = DemandStatusCRMService.getService( ).getStatusCRM( nIdStatusCRM, request.getLocale( ) );
 
                     if ( statusCRM != null )
                     {
                         String strConvertedStatusText = StringUtil.convertString( strStatusText );
                         String strConvertedData = StringUtil.convertString( strData );
-                        strIdDemand = Integer.toString( CRMService.getService(  )
-                                                                  .registerDemand( nIdDemandType, nIdCRMUser,
-                                    strConvertedData, strConvertedStatusText, nIdStatusCRM ) );
+                        strIdDemand = Integer.toString( CRMService.getService( ).registerDemand( nIdDemandType, nIdCRMUser, strConvertedData,
+                                strConvertedStatusText, nIdStatusCRM ) );
                     }
                     else
                     {
-                        AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST +
-                            CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
+                        AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
                     }
                 }
                 else
                 {
-                    AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST +
-                        CRMRestConstants.MESSAGE_INVALID_DEMAND_TYPE );
+                    AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND_TYPE );
                 }
             }
             else
@@ -341,28 +344,32 @@ public class CRMRest
 
     /**
      * Update a demand
-     * @param strIdDemand the id demand
-     * @param strIdStatusCRM the id status crm
-     * @param strStatusText the status text
-     * @param strData the data
-     * @param request {@link HttpServletRequest}
+     * 
+     * @param strIdDemand
+     *            the id demand
+     * @param strIdStatusCRM
+     *            the id status crm
+     * @param strStatusText
+     *            the status text
+     * @param strData
+     *            the data
+     * @param request
+     *            {@link HttpServletRequest}
      * @return the id of the demand
      */
     @POST
     @Path( CRMRestConstants.PATH_UPDATE_DEMAND )
     @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doUpdateDemand( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND )
-    String strIdDemand, @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM )
-    String strIdStatusCRM, @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT )
-    String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA )
-    String strData, @Context
-    HttpServletRequest request )
+    public String doUpdateDemand( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand,
+            @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM ) String strIdStatusCRM,
+            @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT ) String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA ) String strData,
+            @Context HttpServletRequest request )
     {
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
-            Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
+            Demand demand = DemandService.getService( ).findByPrimaryKey( nIdDemand );
 
             if ( demand != null )
             {
@@ -372,20 +379,18 @@ public class CRMRest
                 if ( StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) )
                 {
                     nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
-                    statusCRM = DemandStatusCRMService.getService(  ).getStatusCRM( nIdStatusCRM, request.getLocale(  ) );
+                    statusCRM = DemandStatusCRMService.getService( ).getStatusCRM( nIdStatusCRM, request.getLocale( ) );
                 }
 
                 if ( ( statusCRM != null ) || ( nIdStatusCRM == CRMRestConstants.INVALID_ID_INT ) )
                 {
                     String strConvertedStatusText = StringUtil.convertString( strStatusText );
                     String strConvertedData = StringUtil.convertString( strData );
-                    CRMService.getService(  )
-                              .setStatus( nIdDemand, strConvertedData, strConvertedStatusText, nIdStatusCRM );
+                    CRMService.getService( ).setStatus( nIdDemand, strConvertedData, strConvertedStatusText, nIdStatusCRM );
                 }
                 else
                 {
-                    AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST +
-                        CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
+                    AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
                 }
             }
             else
@@ -404,63 +409,63 @@ public class CRMRest
     /**
      * update a demand using Remote id and id demand Type
      *
-     * @param nVersion the API version
-     * @param strRemoteId the Remote Id
-     * @param strIdDemandType the demand type id
-     * @param strIdStatusCRM the id status crm
-     * @param strStatusText the status text
-     * @param strData the data
-     * @param request {@link HttpServletRequest}
+     * @param nVersion
+     *            the API version
+     * @param strRemoteId
+     *            the Remote Id
+     * @param strIdDemandType
+     *            the demand type id
+     * @param strIdStatusCRM
+     *            the id status crm
+     * @param strStatusText
+     *            the status text
+     * @param strData
+     *            the data
+     * @param request
+     *            {@link HttpServletRequest}
      * @return the id of the demand
      */
     @POST
     @Path( CRMRestConstants.PATH_UPDATE_DEMAND_BY_USER_GUID_V2 )
     @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doUpdateDemandV2( @PathParam( CRMRestConstants.API_VERSION )
-    Integer nVersion, @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID )
-    String strRemoteId, @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType, @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM )
-    String strIdStatusCRM, @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT )
-    String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA )
-    String strData, @Context
-    HttpServletRequest request )
+    public String doUpdateDemandV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+            @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId,
+            @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+            @FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM ) String strIdStatusCRM,
+            @FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT ) String strStatusText, @FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA ) String strData,
+            @Context HttpServletRequest request )
     {
-    	
-    	String strIdDemand = CRMRestConstants.INVALID_ID;
+
+        String strIdDemand = CRMRestConstants.INVALID_ID;
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
-            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) &&
-                    StringUtils.isNumeric( strIdDemandType ) )
+            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) )
             {
                 int nIdDemandType = Integer.parseInt( strIdDemandType );
-                Demand demand = DemandService.getService(  ).findByRemoteKey( strRemoteId, nIdDemandType );
+                Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
 
                 if ( demand != null )
                 {
                     int nIdStatusCRM = CRMRestConstants.INVALID_ID_INT;
-                    strIdDemand=Integer.toString(demand.getIdDemand());
+                    strIdDemand = Integer.toString( demand.getIdDemand( ) );
                     DemandStatusCRM statusCRM = null;
 
                     if ( StringUtils.isNotBlank( strIdStatusCRM ) && StringUtils.isNumeric( strIdStatusCRM ) )
                     {
                         nIdStatusCRM = Integer.parseInt( strIdStatusCRM );
-                        statusCRM = DemandStatusCRMService.getService(  )
-                                                          .getStatusCRM( nIdStatusCRM, request.getLocale(  ) );
+                        statusCRM = DemandStatusCRMService.getService( ).getStatusCRM( nIdStatusCRM, request.getLocale( ) );
                     }
 
                     if ( ( statusCRM != null ) || ( nIdStatusCRM == CRMRestConstants.INVALID_ID_INT ) )
                     {
                         String strConvertedStatusText = StringUtil.convertString( strStatusText );
                         String strConvertedData = StringUtil.convertString( strData );
-                        CRMService.getService(  )
-                                  .setStatus( demand.getIdDemand(  ), strConvertedData, strConvertedStatusText,
-                            nIdStatusCRM );
+                        CRMService.getService( ).setStatus( demand.getIdDemand( ), strConvertedData, strConvertedStatusText, nIdStatusCRM );
                     }
                     else
                     {
-                        AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST +
-                            CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
+                        AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_ID_STATUS_CRM );
                     }
                 }
                 else
@@ -483,24 +488,25 @@ public class CRMRest
 
     /**
      * Delete a demand
-     * @param strIdDemand the id demand
+     * 
+     * @param strIdDemand
+     *            the id demand
      * @return the id of the demand
      */
     @POST
     @Path( CRMRestConstants.PATH_DELETE_DEMAND )
     @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doDeleteDemand( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND )
-    String strIdDemand )
+    public String doDeleteDemand( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand )
     {
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
-            Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
+            Demand demand = DemandService.getService( ).findByPrimaryKey( nIdDemand );
 
             if ( demand != null )
             {
-                CRMService.getService(  ).deleteDemand( nIdDemand );
+                CRMService.getService( ).deleteDemand( nIdDemand );
             }
             else
             {
@@ -518,35 +524,36 @@ public class CRMRest
     /**
      * delete a demand using Remote id and id demand Type
      *
-     * @param nVersion the API version
-     * @param strRemoteId the Remote Id
-     * @param strIdDemandType the demand type id
-    
+     * @param nVersion
+     *            the API version
+     * @param strRemoteId
+     *            the Remote Id
+     * @param strIdDemandType
+     *            the demand type id
+     * 
      * @return the id of the demand
      */
     @POST
     @Path( CRMRestConstants.PATH_DELETE_DEMAND_V2 )
     @Produces( MediaType.TEXT_PLAIN )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doDeleteDemandV2( @PathParam( CRMRestConstants.API_VERSION )
-    Integer nVersion, @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID )
-    String strRemoteId, @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType )
+    public String doDeleteDemandV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+            @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId,
+            @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType )
     {
-    	
-    	String strIdDemand = CRMRestConstants.INVALID_ID;
+
+        String strIdDemand = CRMRestConstants.INVALID_ID;
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
-            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) &&
-                    StringUtils.isNumeric( strIdDemandType ) )
+            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) )
             {
                 int nIdDemandType = Integer.parseInt( strIdDemandType );
-                Demand demand = DemandService.getService(  ).findByRemoteKey( strRemoteId, nIdDemandType );
+                Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
 
                 if ( demand != null )
                 {
-                	strIdDemand=Integer.toString(demand.getIdDemand());
-                    CRMService.getService(  ).deleteDemand( demand.getIdDemand(  ) );
+                    strIdDemand = Integer.toString( demand.getIdDemand( ) );
+                    CRMService.getService( ).deleteDemand( demand.getIdDemand( ) );
                 }
                 else
                 {
@@ -568,15 +575,17 @@ public class CRMRest
 
     /**
      * Get the demand in XML or demand JSON depending the value of strMediaType
-     * @param strIdDemand the id demand
-     * @param strMediaType the media type selected
+     * 
+     * @param strIdDemand
+     *            the id demand
+     * @param strMediaType
+     *            the media type selected
      * @return the demand
      */
     @GET
     @Path( CRMRestConstants.PATH_VIEW_DEMAND )
-    public String getDemand( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND )
-    String strIdDemand, @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE )
-    String strMediaType )
+    public String getDemand( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand,
+            @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE ) String strMediaType )
     {
         if ( StringUtils.isNotBlank( strMediaType ) && strMediaType.equals( CRMRestConstants.MEDIA_TYPE_JSON ) )
         {
@@ -588,18 +597,20 @@ public class CRMRest
 
     /**
      * Get the demand in XML or demand JSON depending the value of strMediaType
-     * @param nVersion the API version
-     * @param strRemoteId the Remote Id
-     * @param strIdDemandType the demand type id
+     * 
+     * @param nVersion
+     *            the API version
+     * @param strRemoteId
+     *            the Remote Id
+     * @param strIdDemandType
+     *            the demand type id
      * @return the demand
      */
     @GET
     @Path( CRMRestConstants.PATH_VIEW_DEMAND_V2 )
-    public String getDemandV2( @PathParam( CRMRestConstants.API_VERSION )
-    Integer nVersion, @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType, @PathParam( CRMRestConstants.PARAMETER_REMOTE_ID )
-    String strRemoteId, @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE )
-    String strMediaType )
+    public String getDemandV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+            @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+            @PathParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId, @QueryParam( CRMRestConstants.PARAMETER_MEDIA_TYPE ) String strMediaType )
     {
         if ( StringUtils.isNotBlank( strMediaType ) && strMediaType.equals( CRMRestConstants.MEDIA_TYPE_JSON ) )
         {
@@ -611,21 +622,22 @@ public class CRMRest
 
     /**
      * Get the XML of the demand
-     * @param strIdDemand the id demand
+     * 
+     * @param strIdDemand
+     *            the id demand
      * @return the XML of the demand
      */
     @GET
     @Path( CRMRestConstants.PATH_VIEW_DEMAND )
     @Produces( MediaType.APPLICATION_XML )
-    public String getDemandXML( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND )
-    String strIdDemand )
+    public String getDemandXML( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand )
     {
-        StringBuffer sbXML = new StringBuffer(  );
+        StringBuffer sbXML = new StringBuffer( );
 
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
-            Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
+            Demand demand = DemandService.getService( ).findByPrimaryKey( nIdDemand );
             sbXML.append( getDemandXML( demand ) );
         }
         else
@@ -634,31 +646,31 @@ public class CRMRest
             sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_INVALID_DEMAND, 3 ) );
         }
 
-        return sbXML.toString(  );
+        return sbXML.toString( );
     }
 
     /**
      * Get the XML of the demand
-     * @param strIdDemand the id demand
+     * 
+     * @param strIdDemand
+     *            the id demand
      * @return the XML of the demand
      */
     @GET
     @Path( CRMRestConstants.PATH_VIEW_DEMAND_V2 )
     @Produces( MediaType.APPLICATION_XML )
-    public String getDemandXMLV2( @PathParam( CRMRestConstants.API_VERSION )
-    Integer nVersion, @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType, @PathParam( CRMRestConstants.PARAMETER_REMOTE_ID )
-    String strRemoteId )
+    public String getDemandXMLV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+            @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+            @PathParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId )
     {
-        StringBuffer sbXML = new StringBuffer(  );
+        StringBuffer sbXML = new StringBuffer( );
 
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
-            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) &&
-                    StringUtils.isNumeric( strIdDemandType ) )
+            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) )
             {
                 int nIdDemandType = Integer.parseInt( strIdDemandType );
-                Demand demand = DemandService.getService(  ).findByRemoteKey( strRemoteId, nIdDemandType );
+                Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
                 sbXML.append( getDemandXML( demand ) );
             }
             else
@@ -673,26 +685,27 @@ public class CRMRest
             sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_INVALID_API_VERSION, 3 ) );
         }
 
-        return sbXML.toString(  );
+        return sbXML.toString( );
     }
 
     /**
      * Get the Json of the demand
-     * @param strIdDemand the id of the demand
+     * 
+     * @param strIdDemand
+     *            the id of the demand
      * @return the Json of the demand
      */
     @GET
     @Path( CRMRestConstants.PATH_VIEW_DEMAND )
     @Produces( MediaType.APPLICATION_JSON )
-    public String getDemandJson( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND )
-    String strIdDemand )
+    public String getDemandJson( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand )
     {
         String strJSON = StringUtils.EMPTY;
 
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
-            Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
+            Demand demand = DemandService.getService( ).findByPrimaryKey( nIdDemand );
             strJSON = getDemandJson( demand );
         }
         else
@@ -706,26 +719,26 @@ public class CRMRest
 
     /**
      * Get the Json of the demand
-     * @param strIdDemand the id demand
+     * 
+     * @param strIdDemand
+     *            the id demand
      * @return the XML of the demand
      */
     @GET
     @Path( CRMRestConstants.PATH_VIEW_DEMAND_V2 )
     @Produces( MediaType.APPLICATION_JSON )
-    public String getDemandJsonV2( @PathParam( CRMRestConstants.API_VERSION )
-    Integer nVersion, @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE )
-    String strIdDemandType, @PathParam( CRMRestConstants.PARAMETER_REMOTE_ID )
-    String strRemoteId )
+    public String getDemandJsonV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+            @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+            @PathParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId )
     {
         String strJSON = StringUtils.EMPTY;
 
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
-            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) &&
-                    StringUtils.isNumeric( strIdDemandType ) )
+            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNotBlank( strIdDemandType ) && StringUtils.isNumeric( strIdDemandType ) )
             {
                 int nIdDemandType = Integer.parseInt( strIdDemandType );
-                Demand demand = DemandService.getService(  ).findByRemoteKey( strRemoteId, nIdDemandType );
+                Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
                 strJSON = getDemandJson( demand );
             }
             else
@@ -745,30 +758,31 @@ public class CRMRest
 
     /**
      * Get the user guid from a given id demand
-     * @param strIdDemand the id demand
+     * 
+     * @param strIdDemand
+     *            the id demand
      * @return the user guid
      */
     @GET
     @Path( CRMRestConstants.PATH_GET_USER_GUID_FROM_ID_DEMAND )
     @Produces( MediaType.TEXT_PLAIN )
-    public String getUserGuidFromIdDemand( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND )
-    String strIdDemand )
+    public String getUserGuidFromIdDemand( @PathParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand )
     {
         String strUserGuid = StringUtils.EMPTY;
 
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) )
         {
             int nIdDemand = Integer.parseInt( strIdDemand );
-            Demand demand = DemandService.getService(  ).findByPrimaryKey( nIdDemand );
+            Demand demand = DemandService.getService( ).findByPrimaryKey( nIdDemand );
 
             if ( demand != null )
             {
-                int nIdCRMUser = demand.getIdCRMUser(  );
-                CRMUser user = CRMUserService.getService(  ).findByPrimaryKey( nIdCRMUser );
+                int nIdCRMUser = demand.getIdCRMUser( );
+                CRMUser user = CRMUserService.getService( ).findByPrimaryKey( nIdCRMUser );
 
                 if ( user != null )
                 {
-                    strUserGuid = user.getUserGuid(  );
+                    strUserGuid = user.getUserGuid( );
                 }
             }
         }
@@ -782,29 +796,31 @@ public class CRMRest
 
     /**
      * Get the XML of the demand
-     * @param demand the demand object
+     * 
+     * @param demand
+     *            the demand object
      * @return the XML of the demand
      */
     private String getDemandXML( Demand demand )
     {
-        StringBuffer sbXML = new StringBuffer(  );
+        StringBuffer sbXML = new StringBuffer( );
 
         if ( demand != null )
         {
-            // sbXML.append( XmlUtil.getXmlHeader(  ) );
+            // sbXML.append( XmlUtil.getXmlHeader( ) );
             sbXML.append( CRMRestConstants.XML_HEADER );
             XmlUtil.beginElement( sbXML, CRMRestConstants.TAG_DEMAND );
 
-            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand(  ) );
-            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
-            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText(  ) );
-            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
-            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_DATA, demand.getData(  ) );
-            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser(  ) );
+            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand( ) );
+            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType( ) );
+            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText( ) );
+            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM( ) );
+            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_DATA, demand.getData( ) );
+            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser( ) );
 
-            String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
+            String strDateModification = DateUtil.getDateString( demand.getDateModification( ), null );
             XmlUtil.addElement( sbXML, CRMRestConstants.TAG_DATE_MODIFICATION, strDateModification );
-            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications(  ) );
+            XmlUtil.addElement( sbXML, CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications( ) );
 
             XmlUtil.endElement( sbXML, CRMRestConstants.TAG_DEMAND );
         }
@@ -814,12 +830,14 @@ public class CRMRest
             sbXML.append( XMLUtil.formatError( CRMRestConstants.MESSAGE_DEMAND_NOT_FOUND, 3 ) );
         }
 
-        return sbXML.toString(  );
+        return sbXML.toString( );
     }
 
     /**
      * Get the Json of the demand
-     * @param demand the demand object
+     * 
+     * @param demand
+     *            the demand object
      * @return the Json of the demand
      */
     private String getDemandJson( Demand demand )
@@ -828,19 +846,19 @@ public class CRMRest
 
         if ( demand != null )
         {
-            JSONObject json = new JSONObject(  );
-            json.accumulate( CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand(  ) );
-            json.accumulate( CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType(  ) );
-            json.accumulate( CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText(  ) );
-            json.accumulate( CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM(  ) );
-            json.accumulate( CRMRestConstants.TAG_DATA, demand.getData(  ) );
-            json.accumulate( CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser(  ) );
+            JSONObject json = new JSONObject( );
+            json.accumulate( CRMRestConstants.TAG_ID_DEMAND, demand.getIdDemand( ) );
+            json.accumulate( CRMRestConstants.TAG_ID_DEMAND_TYPE, demand.getIdDemandType( ) );
+            json.accumulate( CRMRestConstants.TAG_STATUS_TEXT, demand.getStatusText( ) );
+            json.accumulate( CRMRestConstants.TAG_ID_STATUS_CRM, demand.getIdStatusCRM( ) );
+            json.accumulate( CRMRestConstants.TAG_DATA, demand.getData( ) );
+            json.accumulate( CRMRestConstants.TAG_USER_GUID, demand.getIdCRMUser( ) );
 
-            String strDateModification = DateUtil.getDateString( demand.getDateModification(  ), null );
+            String strDateModification = DateUtil.getDateString( demand.getDateModification( ), null );
             json.accumulate( CRMRestConstants.TAG_DATE_MODIFICATION, strDateModification );
-            json.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications(  ) );
+            json.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS, demand.getNumberNotifications( ) );
 
-            JSONObject jsonDemand = new JSONObject(  );
+            JSONObject jsonDemand = new JSONObject( );
             jsonDemand.accumulate( CRMRestConstants.TAG_DEMAND, json );
             strJSON = jsonDemand.toString( 4 );
         }
