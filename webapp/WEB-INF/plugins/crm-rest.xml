@@ -19,7 +19,7 @@
     <db-pool-required>0</db-pool-required>
 
 	<!-- REST security : Comment the filters if you want to test the REST service with the given JSP -->
-	<filters>
+    <filters>
        <filter>
            <filter-name>CRMRestSecurity</filter-name>
            <url-pattern>/rest/crm/*</url-pattern>

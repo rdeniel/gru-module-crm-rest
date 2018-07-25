@@ -6,4 +6,5 @@
     <bean id="crm-rest.crmRest" class="fr.paris.lutece.plugins.crm.modules.rest.rs.CRMRest" />
     <bean id="crm-rest.crmNotificationRest" class="fr.paris.lutece.plugins.crm.modules.rest.rs.CRMNotificationRest" />
     <bean id="crm-rest.crmUserAttributesRest" class="fr.paris.lutece.plugins.crm.modules.rest.rs.CRMUserAttributesRest" />
+    <bean id="crm-rest.crmDemandTypeRest" class="fr.paris.lutece.plugins.crm.modules.rest.rs.CRMDemandTypeRest" />
 </beans>
