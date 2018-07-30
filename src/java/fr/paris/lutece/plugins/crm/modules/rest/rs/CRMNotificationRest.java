@@ -65,6 +65,10 @@ import fr.paris.lutece.plugins.rest.service.RestConstants;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.json.AbstractJsonResponse;
+import fr.paris.lutece.util.json.ErrorJsonResponse;
+import fr.paris.lutece.util.json.JsonResponse;
+import fr.paris.lutece.util.json.JsonUtil;
 import net.sf.json.JSONObject;
 
 /**
@@ -90,13 +94,16 @@ public class CRMNotificationRest
      */
     @POST
     @Path( CRMRestConstants.PATH_DEMAND )
-    @Produces( MediaType.TEXT_PLAIN )
+    @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     public String doNotify( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand,
             @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT ) String strNotificationObject,
             @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_MESSAGE ) String strNotificationMessage,
             @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender )
     {
+
+        AbstractJsonResponse jsonResponse ;
+                
         if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) && StringUtils.isNotBlank( strNotificationObject ) )
         {
             String strObject = StringUtil.convertString( strNotificationObject );
@@ -109,18 +116,31 @@ public class CRMNotificationRest
             if ( demand != null )
             {
                 CRMService.getService( ).notify( nIdDemand, strObject, strMessage, strSender );
+                
+                // success
+                jsonResponse = new JsonResponse( strIdDemand ) ;
+                return JsonUtil.buildJsonResponse( jsonResponse );
             }
             else
             {
                 AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+                jsonResponse = new ErrorJsonResponse( 
+                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+                        CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
             }
         }
         else
         {
             AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
+            jsonResponse = new ErrorJsonResponse( 
+                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+                        CRMRestConstants.MESSAGE_MANDATORY_FIELDS ) ;
         }
-
-        return strIdDemand;
+        
+        // fail
+        
+        return JsonUtil.buildJsonResponse( jsonResponse );
+        
     }
 
     /**
@@ -142,7 +162,7 @@ public class CRMNotificationRest
      */
     @POST
     @Path( CRMRestConstants.PATH_NOTIFY_DEMAND_V2 )
-    @Produces( MediaType.TEXT_PLAIN )
+    @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
     public String doNotifyV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
             @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId,
@@ -152,6 +172,8 @@ public class CRMNotificationRest
             @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender )
     {
 
+        AbstractJsonResponse jsonResponse ;
+        
         String strIdDemand = CRMRestConstants.INVALID_ID;
         if ( nVersion == CRMRestConstants.VERSION_2 )
         {
@@ -168,23 +190,37 @@ public class CRMNotificationRest
                 {
                     strIdDemand = Integer.toString( demand.getIdDemand( ) );
                     CRMService.getService( ).notify( demand.getIdDemand( ), strObject, strMessage, strSender );
+                    
+                    // success
+                    jsonResponse = new JsonResponse( strIdDemand ) ;
+                    return JsonUtil.buildJsonResponse( jsonResponse );
                 }
                 else
                 {
                     AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+                    jsonResponse = new ErrorJsonResponse( 
+                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+                        CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
                 }
             }
             else
             {
                 AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
+                jsonResponse = new ErrorJsonResponse( 
+                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+                        CRMRestConstants.MESSAGE_MANDATORY_FIELDS ) ;
             }
         }
         else
         {
             AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
+            jsonResponse = new ErrorJsonResponse( 
+                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+                        CRMRestConstants.MESSAGE_INVALID_API_VERSION ) ;
         }
 
-        return strIdDemand;
+        // fail
+        return JsonUtil.buildJsonResponse( jsonResponse );
     }
 
     /**
