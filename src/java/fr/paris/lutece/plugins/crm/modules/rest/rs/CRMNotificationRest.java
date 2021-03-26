@@ -79,271 +79,345 @@ import net.sf.json.JSONObject;
 @Path( RestConstants.BASE_PATH + CRMPlugin.PLUGIN_NAME + CRMRestConstants.PATH_NOTIFY )
 public class CRMNotificationRest
 {
-    /**
-     * Notification for a demand
-     * 
-     * @param strIdDemand
-     *            the id demand
-     * @param strNotificationObject
-     *            the notification object
-     * @param strNotificationMessage
-     *            the notification message
-     * @param strNotificationSender
-     *            the sender
-     * @return the id demand
-     */
-    @POST
-    @Path( CRMRestConstants.PATH_DEMAND )
-    @Produces( MediaType.APPLICATION_JSON )
-    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doNotify( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand,
-            @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT ) String strNotificationObject,
-            @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_MESSAGE ) String strNotificationMessage,
-            @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender )
-    {
+	/**
+	 * Notification for a demand
+	 * 
+	 * @param strIdDemand
+	 *            the id demand
+	 * @param strNotificationObject
+	 *            the notification object
+	 * @param strNotificationMessage
+	 *            the notification message
+	 * @param strNotificationSender
+	 *            the sender
+	 * @return the id demand
+	 */
+	@POST
+	@Path( CRMRestConstants.PATH_DEMAND )
+	@Produces( MediaType.APPLICATION_JSON )
+	@Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+	public String doNotify( @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND ) String strIdDemand,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT ) String strNotificationObject,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_MESSAGE ) String strNotificationMessage,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender )
+	{
 
-        AbstractJsonResponse jsonResponse ;
-                
-        if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) && StringUtils.isNotBlank( strNotificationObject ) )
-        {
-            String strObject = StringUtil.convertString( strNotificationObject );
-            String strMessage = StringUtil.convertString( strNotificationMessage );
-            String strSender = StringUtil.convertString( strNotificationSender );
+		AbstractJsonResponse jsonResponse ;
 
-            int nIdDemand = Integer.parseInt( strIdDemand );
-            Demand demand = DemandService.getService( ).findByPrimaryKey( nIdDemand );
+		if ( StringUtils.isNotBlank( strIdDemand ) && StringUtils.isNumeric( strIdDemand ) && StringUtils.isNotBlank( strNotificationObject ) )
+		{
+			String strObject = StringUtil.convertString( strNotificationObject );
+			String strMessage = StringUtil.convertString( strNotificationMessage );
+			String strSender = StringUtil.convertString( strNotificationSender );
 
-            if ( demand != null )
-            {
-                CRMService.getService( ).notify( nIdDemand, strObject, strMessage, strSender );
-                
-                // success
-                jsonResponse = new JsonResponse( strIdDemand ) ;
-                return JsonUtil.buildJsonResponse( jsonResponse );
-            }
-            else
-            {
-                AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
-                jsonResponse = new ErrorJsonResponse( 
-                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
-                        CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
-            }
-        }
-        else
-        {
-            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
-            jsonResponse = new ErrorJsonResponse( 
-                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
-                        CRMRestConstants.MESSAGE_MANDATORY_FIELDS ) ;
-        }
-        
-        // fail
-        
-        return JsonUtil.buildJsonResponse( jsonResponse );
-        
-    }
+			int nIdDemand = Integer.parseInt( strIdDemand );
+			Demand demand = DemandService.getService( ).findByPrimaryKey( nIdDemand );
 
-    /**
-     * notify a demand using Remote id and id demand Type
-     *
-     * @param nVersion
-     *            the API version
-     * @param strRemoteId
-     *            the Remote Id
-     * @param strIdDemandType
-     *            the demand type id
-     * @param strNotificationObject
-     *            the notification object
-     * @param strNotificationMessage
-     *            the notification message
-     * @param strNotificationSender
-     *            the sender
-     * @return the id demand
-     */
-    @POST
-    @Path( CRMRestConstants.PATH_NOTIFY_DEMAND_V2 )
-    @Produces( MediaType.APPLICATION_JSON )
-    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    public String doNotifyV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
-            @FormParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId,
-            @FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
-            @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT ) String strNotificationObject,
-            @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_MESSAGE ) String strNotificationMessage,
-            @FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender )
-    {
+			if ( demand != null )
+			{
+				CRMService.getService( ).notify( nIdDemand, strObject, strMessage, strSender );
 
-        AbstractJsonResponse jsonResponse ;
-        
-        String strIdDemand = CRMRestConstants.INVALID_ID;
-        if ( nVersion == CRMRestConstants.VERSION_2 )
-        {
-            if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNumeric( strIdDemandType ) && StringUtils.isNotBlank( strNotificationObject ) )
-            {
-                String strObject = StringUtil.convertString( strNotificationObject );
-                String strMessage = StringUtil.convertString( strNotificationMessage );
-                String strSender = StringUtil.convertString( strNotificationSender );
+				// success
+				jsonResponse = new JsonResponse( strIdDemand ) ;
+				return JsonUtil.buildJsonResponse( jsonResponse );
+			}
+			else
+			{
+				AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+				jsonResponse = new ErrorJsonResponse( 
+						String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+						CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
+			}
+		}
+		else
+		{
+			AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
+			jsonResponse = new ErrorJsonResponse( 
+					String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+					CRMRestConstants.MESSAGE_MANDATORY_FIELDS ) ;
+		}
 
-                int nIdDemandType = Integer.parseInt( strIdDemandType );
-                Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
+		// fail
 
-                if ( demand != null )
-                {
-                    strIdDemand = Integer.toString( demand.getIdDemand( ) );
-                    CRMService.getService( ).notify( demand.getIdDemand( ), strObject, strMessage, strSender );
-                    
-                    // success
-                    jsonResponse = new JsonResponse( strIdDemand ) ;
-                    return JsonUtil.buildJsonResponse( jsonResponse );
-                }
-                else
-                {
-                    AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
-                    jsonResponse = new ErrorJsonResponse( 
-                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
-                        CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
-                }
-            }
-            else
-            {
-                AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
-                jsonResponse = new ErrorJsonResponse( 
-                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
-                        CRMRestConstants.MESSAGE_MANDATORY_FIELDS ) ;
-            }
-        }
-        else
-        {
-            AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
-            jsonResponse = new ErrorJsonResponse( 
-                        String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
-                        CRMRestConstants.MESSAGE_INVALID_API_VERSION ) ;
-        }
+		return JsonUtil.buildJsonResponse( jsonResponse );
 
-        // fail
-        return JsonUtil.buildJsonResponse( jsonResponse );
-    }
+	}
 
-    /**
-     * Get the Json of the number notifications not read by Demand Type
-     * 
-     * @param request
-     * @return the JSON of the number notifications not read by Demand Type
-     */
-    @GET
-    @Path( CRMRestConstants.PATH_USER_NOTIFICATIONS )
-    @Produces( MediaType.APPLICATION_JSON )
-    public String getNumberNotificationsJson( @Context HttpServletRequest request )
-    {
-        String strJSON = StringUtils.EMPTY;
-        DemandFilter filter = new DemandFilter( );
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+	/**
+	 * notify a demand using Remote id and id demand Type
+	 *
+	 * @param nVersion
+	 *            the API version
+	 * @param strRemoteId
+	 *            the Remote Id
+	 * @param strIdDemandType
+	 *            the demand type id
+	 * @param strNotificationObject
+	 *            the notification object
+	 * @param strNotificationMessage
+	 *            the notification message
+	 * @param strNotificationSender
+	 *            the sender
+	 * @return the id demand
+	 */
+	@POST
+	@Path( CRMRestConstants.PATH_NOTIFY_DEMAND_V2 )
+	@Produces( MediaType.APPLICATION_JSON )
+	@Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+	public String doNotifyV2( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+			@FormParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId,
+			@FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT ) String strNotificationObject,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_MESSAGE ) String strNotificationMessage,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender )
+	{
 
-        if ( user != null )
-        {
+		AbstractJsonResponse jsonResponse ;
 
-            CRMUserService crmUserService = CRMUserService.getService( );
-            CRMUser crmUser = crmUserService.findByUserGuid( user.getName( ) );
+		String strIdDemand = CRMRestConstants.INVALID_ID;
+		if ( nVersion == CRMRestConstants.VERSION_2 )
+		{
+			if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNumeric( strIdDemandType ) && StringUtils.isNotBlank( strNotificationObject ) )
+			{
+				String strObject = StringUtil.convertString( strNotificationObject );
+				String strMessage = StringUtil.convertString( strNotificationMessage );
+				String strSender = StringUtil.convertString( strNotificationSender );
 
-            if ( crmUser != null )
-            {
+				int nIdDemandType = Integer.parseInt( strIdDemandType );
+				Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
 
-                filter.setIdCRMUser( crmUser.getIdCRMUser( ) );
-                List<Demand> listDemand = DemandService.getService( ).findByFilter( filter );
-                strJSON = getNumberNotifications( listDemand );
+				if ( demand != null )
+				{
+					strIdDemand = Integer.toString( demand.getIdDemand( ) );
+					CRMService.getService( ).notify( demand.getIdDemand( ), strObject, strMessage, strSender );
 
-            }
-            else
-            {
+					// success
+					jsonResponse = new JsonResponse( strIdDemand ) ;
+					return JsonUtil.buildJsonResponse( jsonResponse );
+				}
+				else
+				{
+					AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+					jsonResponse = new ErrorJsonResponse( 
+							String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+							CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
+				}
+			}
+			else
+			{
+				AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_MANDATORY_FIELDS );
+				jsonResponse = new ErrorJsonResponse( 
+						String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+						CRMRestConstants.MESSAGE_MANDATORY_FIELDS ) ;
+			}
+		}
+		else
+		{
+			AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
+			jsonResponse = new ErrorJsonResponse( 
+					String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+					CRMRestConstants.MESSAGE_INVALID_API_VERSION ) ;
+		}
 
-                return StringUtils.EMPTY;
-            }
-        }
+		// fail
+		return JsonUtil.buildJsonResponse( jsonResponse );
+	}
 
-        return strJSON;
-    }
+	/**
+	 * notify a demand using Remote id and id demand Type and create the Demand if it doesn't exist
+	 *
+	 * @param nVersion
+	 *            the API version
+	 * @param strRemoteId
+	 *            the Remote Id
+	 * @param strIdDemandType
+	 *            the demand type id
+	 * @param strNotificationObject
+	 *            the notification object
+	 * @param strNotificationMessage
+	 *            the notification message
+	 * @param strNotificationSender
+	 *            the sender
+	 * @return the id demand
+	 */
+	@POST
+	@Path( CRMRestConstants.PATH_CREATE_DEMAND_BY_USER_GUID_V2 + "andNotify" )
+	@Produces( MediaType.APPLICATION_JSON )
+	@Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+	public String doCreateDemandNotify( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
+			@FormParam( CRMRestConstants.PARAMETER_REMOTE_ID ) String strRemoteId,
+			@FormParam( CRMRestConstants.PARAMETER_ID_DEMAND_TYPE ) String strIdDemandType,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_OBJECT ) String strNotificationObject,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_MESSAGE ) String strNotificationMessage,
+			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender,
+			@FormParam( CRMRestConstants.PARAMETER_USER_GUID ) String strUserGuid,
+			@FormParam( CRMRestConstants.PARAMETER_ID_STATUS_CRM ) String strIdStatusCRM,
+			@FormParam( CRMRestConstants.PARAMETER_STATUS_TEXT ) String strStatusText,
+			@FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA ) String strData,
+			@Context HttpServletRequest request)
+	{
+		String strIdDemand = CRMRestConstants.INVALID_ID;
+		CRMRest crmRest = new CRMRest( );
+		if ( nVersion == CRMRestConstants.VERSION_3 )
+		{
+			if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNumeric( strIdDemandType ) && StringUtils.isNotBlank( strNotificationObject ) )
+			{
+				String strObject = StringUtil.convertString( strNotificationObject );
+				String strMessage = StringUtil.convertString( strNotificationMessage );
+				String strSender = StringUtil.convertString( strNotificationSender );
 
-    /**
-     * Get the Json of the number notifications not read by Demand Type by user Guid The Api must be protected by signed request
-     * 
-     * @param request
-     *            http servlet request
-     * @param strGuid
-     *            the user Guid
-     * @return the JSON of the number notifications not read by Demand Type
-     */
-    @GET
-    @Path( CRMRestConstants.PATH_USER_NOTIFICATIONS_BY_GUID )
-    @Produces( MediaType.APPLICATION_JSON )
-    public String getNumberNotificationsByGuidJson( @Context HttpServletRequest request, @PathParam( CRMRestConstants.USER_GUID ) String strGuid )
-    {
-        String strJSON = StringUtils.EMPTY;
-        DemandFilter filter = new DemandFilter( );
+				int nIdDemandType = Integer.parseInt( strIdDemandType );
+				Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
 
-        if ( !StringUtils.isEmpty( strGuid ) )
-        {
+				if ( demand != null && demand.getRemoteId( ).equals( strUserGuid ) )
+				{
+					treatDemand( strIdDemand, demand, strObject, strMessage, strSender);
+				}else
+				{
+					demand =  DemandService.getService( ).findByPrimaryKey( Integer.parseInt( crmRest.doCreateDemandByUserGuidV2(nIdDemandType, strRemoteId, strIdDemandType, strUserGuid, strIdStatusCRM, strStatusText, strData, request) ) );
+					treatDemand( strIdDemand, demand, strObject, strMessage, strSender);
+				}
+				
+				return String.valueOf( demand.getIdDemand() );
 
-            CRMUserService crmUserService = CRMUserService.getService( );
-            CRMUser crmUser = crmUserService.findByUserGuid( strGuid );
+			}
 
-            if ( crmUser != null )
-            {
+		}
+		return null;
+	}
 
-                filter.setIdCRMUser( crmUser.getIdCRMUser( ) );
-                List<Demand> listDemand = DemandService.getService( ).findByFilter( filter );
-                strJSON = getNumberNotifications( listDemand );
+	/**
+	 * Get the Json of the number notifications not read by Demand Type
+	 * 
+	 * @param request
+	 * @return the JSON of the number notifications not read by Demand Type
+	 */
+	@GET
+	@Path( CRMRestConstants.PATH_USER_NOTIFICATIONS )
+	@Produces( MediaType.APPLICATION_JSON )
+	public String getNumberNotificationsJson( @Context HttpServletRequest request )
+	{
+		String strJSON = StringUtils.EMPTY;
+		DemandFilter filter = new DemandFilter( );
+		LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
-            }
-            else
-            {
+		if ( user != null )
+		{
 
-                return StringUtils.EMPTY;
-            }
-        }
+			CRMUserService crmUserService = CRMUserService.getService( );
+			CRMUser crmUser = crmUserService.findByUserGuid( user.getName( ) );
 
-        return strJSON;
-    }
+			if ( crmUser != null )
+			{
 
-    /**
-     * Get the Json of the number notifications not read
-     * 
-     * @param listDemand
-     *            the list demand object
-     * @return the Json of the notification
-     */
-    private String getNumberNotifications( List<Demand> listDemand )
-    {
-        String strJSON = StringUtils.EMPTY;
-        JSONObject json = new JSONObject( );
-        if ( listDemand == null || listDemand.isEmpty( ) )
-        {
+				filter.setIdCRMUser( crmUser.getIdCRMUser( ) );
+				List<Demand> listDemand = DemandService.getService( ).findByFilter( filter );
+				strJSON = getNumberNotifications( listDemand );
 
-            return strJSON;
-        }
+			}
+			else
+			{
 
-        Map<Integer, Integer> map = new HashMap<Integer, Integer>( );
-        int nBNotifTotal = 0;
-        for ( DemandType demandType : DemandTypeService.getService( ).findAll( ) )
-        {
+				return StringUtils.EMPTY;
+			}
+		}
 
-            map.put( demandType.getIdDemandType( ), 0 );
-            JSONObject jsonTypedemande = new JSONObject( );
-            for ( Demand demand : listDemand )
-            {
-                if ( demand.getIdDemandType( ) == demandType.getIdDemandType( ) )
-                {
-                    map.put( demandType.getIdDemandType( ), map.get( demandType.getIdDemandType( ) ) + demand.getNumberUnreadNotifications( ) );
-                    nBNotifTotal = nBNotifTotal + demand.getNumberUnreadNotifications( );
-                }
-            }
-            jsonTypedemande.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS_UNREAD, map.get( demandType.getIdDemandType( ) ) );
-            jsonTypedemande.accumulate( CRMRestConstants.PARAMETER_LABEL_DEMAND_TYPE, demandType.getLabel( ) );
-            json.accumulate( String.valueOf( demandType.getIdDemandType( ) ), jsonTypedemande );
-            JSONObject jsonDemand = new JSONObject( );
-            jsonDemand.accumulate( CRMRestConstants.TAG_DEMNAD_TYPE, json );
-            jsonDemand.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS_UNREAD, nBNotifTotal );
-            strJSON = jsonDemand.toString( 4 );
-        }
+		return strJSON;
+	}
 
-        return strJSON;
-    }
+	/**
+	 * Get the Json of the number notifications not read by Demand Type by user Guid The Api must be protected by signed request
+	 * 
+	 * @param request
+	 *            http servlet request
+	 * @param strGuid
+	 *            the user Guid
+	 * @return the JSON of the number notifications not read by Demand Type
+	 */
+	@GET
+	@Path( CRMRestConstants.PATH_USER_NOTIFICATIONS_BY_GUID )
+	@Produces( MediaType.APPLICATION_JSON )
+	public String getNumberNotificationsByGuidJson( @Context HttpServletRequest request, @PathParam( CRMRestConstants.USER_GUID ) String strGuid )
+	{
+		String strJSON = StringUtils.EMPTY;
+		DemandFilter filter = new DemandFilter( );
+
+		if ( !StringUtils.isEmpty( strGuid ) )
+		{
+
+			CRMUserService crmUserService = CRMUserService.getService( );
+			CRMUser crmUser = crmUserService.findByUserGuid( strGuid );
+
+			if ( crmUser != null )
+			{
+
+				filter.setIdCRMUser( crmUser.getIdCRMUser( ) );
+				List<Demand> listDemand = DemandService.getService( ).findByFilter( filter );
+				strJSON = getNumberNotifications( listDemand );
+
+			}
+			else
+			{
+
+				return StringUtils.EMPTY;
+			}
+		}
+
+		return strJSON;
+	}
+
+	/**
+	 * Get the Json of the number notifications not read
+	 * 
+	 * @param listDemand
+	 *            the list demand object
+	 * @return the Json of the notification
+	 */
+	private String getNumberNotifications( List<Demand> listDemand )
+	{
+		String strJSON = StringUtils.EMPTY;
+		JSONObject json = new JSONObject( );
+		if ( listDemand == null || listDemand.isEmpty( ) )
+		{
+
+			return strJSON;
+		}
+
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>( );
+		int nBNotifTotal = 0;
+		for ( DemandType demandType : DemandTypeService.getService( ).findAll( ) )
+		{
+
+			map.put( demandType.getIdDemandType( ), 0 );
+			JSONObject jsonTypedemande = new JSONObject( );
+			for ( Demand demand : listDemand )
+			{
+				if ( demand.getIdDemandType( ) == demandType.getIdDemandType( ) )
+				{
+					map.put( demandType.getIdDemandType( ), map.get( demandType.getIdDemandType( ) ) + demand.getNumberUnreadNotifications( ) );
+					nBNotifTotal = nBNotifTotal + demand.getNumberUnreadNotifications( );
+				}
+			}
+			jsonTypedemande.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS_UNREAD, map.get( demandType.getIdDemandType( ) ) );
+			jsonTypedemande.accumulate( CRMRestConstants.PARAMETER_LABEL_DEMAND_TYPE, demandType.getLabel( ) );
+			json.accumulate( String.valueOf( demandType.getIdDemandType( ) ), jsonTypedemande );
+			JSONObject jsonDemand = new JSONObject( );
+			jsonDemand.accumulate( CRMRestConstants.TAG_DEMNAD_TYPE, json );
+			jsonDemand.accumulate( CRMRestConstants.TAG_NB_NOTIFICATIONS_UNREAD, nBNotifTotal );
+			strJSON = jsonDemand.toString( 4 );
+		}
+
+		return strJSON;
+	}
+	
+	private String treatDemand( String strIdDemand, Demand demand, String strObject, String strMessage, String strSender)
+	{
+		AbstractJsonResponse jsonResponse;
+		strIdDemand = Integer.toString( demand.getIdDemand( ) );
+		CRMService.getService( ).notify( demand.getIdDemand( ), strObject, strMessage, strSender );
+
+		// success
+		jsonResponse = new JsonResponse( strIdDemand ) ;
+		return JsonUtil.buildJsonResponse( jsonResponse );
+	}
 }

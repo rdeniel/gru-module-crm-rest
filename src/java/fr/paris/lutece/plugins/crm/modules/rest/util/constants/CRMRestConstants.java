@@ -49,6 +49,7 @@ public final class CRMRestConstants
     public static final String MEDIA_TYPE_XML = "application/xml";
     public static final String API_VERSION = "version";
     public static final int VERSION_2 = 2;
+    public static final int VERSION_3 = 3;
     public static final String USER_GUID = "user_guid";
     // PATHS
     public static final String PATH_WADL = "wadl";
