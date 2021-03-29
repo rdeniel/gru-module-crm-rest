@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.crm.business.demand.Demand;
 import fr.paris.lutece.plugins.crm.business.demand.DemandFilter;
+import fr.paris.lutece.plugins.crm.business.demand.DemandHome;
 import fr.paris.lutece.plugins.crm.business.demand.DemandType;
 import fr.paris.lutece.plugins.crm.business.user.CRMUser;
 import fr.paris.lutece.plugins.crm.modules.rest.util.StringUtil;
@@ -172,7 +173,7 @@ public class CRMNotificationRest
 			@FormParam( CRMRestConstants.PARAMETER_NOTIFICATION_SENDER ) String strNotificationSender )
 	{
 
-		AbstractJsonResponse jsonResponse ;
+		AbstractJsonResponse jsonResponse;
 
 		String strIdDemand = CRMRestConstants.INVALID_ID;
 		if ( nVersion == CRMRestConstants.VERSION_2 )
@@ -241,7 +242,7 @@ public class CRMNotificationRest
 	 * @return the id demand
 	 */
 	@POST
-	@Path( CRMRestConstants.PATH_CREATE_DEMAND_BY_USER_GUID_V2 + "andNotify" )
+	@Path( "/{version}/notification" )
 	@Produces( MediaType.APPLICATION_JSON )
 	@Consumes( MediaType.APPLICATION_FORM_URLENCODED )
 	public String doCreateDemandNotify( @PathParam( CRMRestConstants.API_VERSION ) Integer nVersion,
@@ -256,9 +257,10 @@ public class CRMNotificationRest
 			@FormParam( CRMRestConstants.PARAMETER_DEMAND_DATA ) String strData,
 			@Context HttpServletRequest request)
 	{
+		AbstractJsonResponse jsonResponse;
 		String strIdDemand = CRMRestConstants.INVALID_ID;
 		CRMRest crmRest = new CRMRest( );
-		if ( nVersion == CRMRestConstants.VERSION_3 )
+		if ( nVersion == CRMRestConstants.VERSION_1 )
 		{
 			if ( StringUtils.isNotBlank( strRemoteId ) && StringUtils.isNumeric( strIdDemandType ) && StringUtils.isNotBlank( strNotificationObject ) )
 			{
@@ -269,21 +271,44 @@ public class CRMNotificationRest
 				int nIdDemandType = Integer.parseInt( strIdDemandType );
 				Demand demand = DemandService.getService( ).findByRemoteKey( strRemoteId, nIdDemandType );
 
-				if ( demand != null && demand.getRemoteId( ).equals( strUserGuid ) )
+				if ( demand != null )
 				{
-					treatDemand( strIdDemand, demand, strObject, strMessage, strSender);
+					if( demand.getRemoteId( ).equals( strUserGuid ) )
+					{   
+						jsonResponse = notifyDemand( strIdDemand, demand, strObject, strMessage, strSender);
+					}
+					else
+					{
+						AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+						jsonResponse = new ErrorJsonResponse( 
+								String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+								CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
+					}
 				}else
 				{
 					demand =  DemandService.getService( ).findByPrimaryKey( Integer.parseInt( crmRest.doCreateDemandByUserGuidV2(nIdDemandType, strRemoteId, strIdDemandType, strUserGuid, strIdStatusCRM, strStatusText, strData, request) ) );
-					treatDemand( strIdDemand, demand, strObject, strMessage, strSender);
+					jsonResponse = notifyDemand( strIdDemand, demand, strObject, strMessage, strSender);
 				}
-				
-				return String.valueOf( demand.getIdDemand() );
 
+			}
+			else
+			{
+				AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_DEMAND );
+				jsonResponse = new ErrorJsonResponse( 
+						String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+						CRMRestConstants.MESSAGE_INVALID_DEMAND ) ;
 			}
 
 		}
-		return null;
+		else
+		{
+			AppLogService.error( CRMRestConstants.MESSAGE_CRM_REST + CRMRestConstants.MESSAGE_INVALID_API_VERSION );
+			jsonResponse = new ErrorJsonResponse( 
+					String.valueOf(org.apache.commons.httpclient.HttpStatus.SC_PRECONDITION_FAILED), 
+					CRMRestConstants.MESSAGE_INVALID_API_VERSION ) ;
+		}
+
+		return JsonUtil.buildJsonResponse( jsonResponse );
 	}
 
 	/**
@@ -409,15 +434,16 @@ public class CRMNotificationRest
 
 		return strJSON;
 	}
-	
-	private String treatDemand( String strIdDemand, Demand demand, String strObject, String strMessage, String strSender)
-	{
-		AbstractJsonResponse jsonResponse;
-		strIdDemand = Integer.toString( demand.getIdDemand( ) );
-		CRMService.getService( ).notify( demand.getIdDemand( ), strObject, strMessage, strSender );
 
+	private AbstractJsonResponse notifyDemand( String strIdDemand, Demand demand, String strObject, String strMessage, String strSender)
+	{
+		strIdDemand = Integer.toString( demand.getIdDemand( ) );
+		int strIdStatus = demand.getIdStatusCRM( );
+		CRMService.getService( ).notify( demand.getIdDemand( ), strObject, strMessage, strSender );
+		if( strIdStatus != demand.getIdStatusCRM( ) ) {
+			DemandHome.update( demand );
+		}
 		// success
-		jsonResponse = new JsonResponse( strIdDemand ) ;
-		return JsonUtil.buildJsonResponse( jsonResponse );
+		return new JsonResponse( strIdDemand ) ;
 	}
 }
